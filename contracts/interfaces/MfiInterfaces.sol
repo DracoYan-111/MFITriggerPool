@@ -2,8 +2,9 @@
 pragma solidity ^0.8.6;
 
 /**
- * @title IPancakeProfile
+ * @title IPancakeProfile contract interface
  */
+/*
 interface IPancakeProfile {
     function createProfile(
         uint256 _teamId,
@@ -48,46 +49,7 @@ interface IPancakeProfile {
         bool
     );
 }
-
-/**
- * @title ISmartChefInitializable
- */
-interface ISmartChefInitializable {
-    /*
-     * @notice Deposit staked tokens and collect reward tokens (if any)
-     * @param _amount: amount to withdraw (in rewardToken)
-     */
-    function deposit(uint256 _amount) external;
-
-    /*
-     * @notice Withdraw staked tokens and collect reward tokens
-     * @param _amount: amount to withdraw (in rewardToken)
-     */
-    function withdraw(uint256 _amount) external;
-
-    /*
-     * @notice Withdraw staked tokens without caring about rewards rewards
-     * @dev Needs to be for emergency.
-     */
-    function emergencyWithdraw() external;
-
-    /*
-     * @notice View function to see pending reward on frontend.
-     * @param _user: user address
-     * @return Pending reward for a given user
-     */
-    function pendingReward(address _user) external view returns (uint256);
-
-    /*
-     * @notice Return user limit is set or zero.
-     */
-    function hasUserLimit() external view returns (bool);
-
-    /*
-     * @notice Get reward tokens
-     */
-    function rewardToken() external view returns (address);
-}
+*/
 
 /**
  * @title PancakeRouter01 contract interface
@@ -252,6 +214,65 @@ interface IPancakeRouter01 {
 }
 
 /**
+ * @title MetaFinanceIssuePool contract interface
+ */
+interface IMetaFinanceIssuePool {
+    /**
+     * @notice Deposit staked tokens and collect reward tokens (if any)
+     * @param userAddress_ Pledged user address
+     * @param amount_ The amount of users pledge
+     */
+    function stake(address userAddress_, uint256 amount_) external;
+
+    /**
+     * @notice Deposit staked tokens and collect reward tokens (if any)
+     * @param userAddress_ Release the user address
+     * @param amount_ The number of users released
+     */
+    function withdraw(address userAddress_, uint256 amount_) external;
+}
+
+/**
+ * @title ISmartChefInitializable contract interface
+ */
+interface ISmartChefInitializable {
+    /**
+     * @notice Deposit staked tokens and collect reward tokens (if any)
+     * @param _amount: amount to withdraw (in rewardToken)
+     */
+    function deposit(uint256 _amount) external;
+
+    /**
+     * @notice Withdraw staked tokens and collect reward tokens
+     * @param _amount: amount to withdraw (in rewardToken)
+     */
+    function withdraw(uint256 _amount) external;
+
+    /**
+     * @notice Withdraw staked tokens without caring about rewards rewards
+     * @dev Needs to be for emergency.
+     */
+    function emergencyWithdraw() external;
+
+    /**
+     * @notice View function to see pending reward on frontend.
+     * @param _user: user address
+     * @return Pending reward for a given user
+     */
+    function pendingReward(address _user) external view returns (uint256);
+
+    /**
+     * @notice Return user limit is set or zero.
+     */
+    function hasUserLimit() external view returns (bool);
+
+    /**
+     * @notice Get reward tokens
+     */
+    function rewardToken() external view returns (address);
+}
+
+/**
  * @title PancakeRouter02 and PancakeRouter01 contract interface
  */
 interface IPancakeRouter02 is IPancakeRouter01 {
@@ -300,3 +321,5 @@ interface IPancakeRouter02 is IPancakeRouter01 {
         uint256 deadline
     ) external;
 }
+
+

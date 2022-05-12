@@ -12,18 +12,27 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     using SafeERC20 for IERC20Metadata;
 
     // ==================== PRIVATE ====================
+
     mapping(address => uint256) private _rOwned;
     mapping(address => uint256) private _tOwned;
-    mapping(address => bool) private _isExcludedFromFee;
     mapping(address => bool) private _isExcluded;
-    uint256 private  _tTotal = 1 * 10 ** 50;
+    mapping(address => bool) private _isExcludedFromFee;
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
-    uint256 private  _taxFee = 100;
+    uint256 private  _tTotal = 1 * 10 ** 50;
     uint256 private  _previousTaxFee = 100;
+    uint256 private  _taxFee = 100;
 
 
+    // ==================== MODIFIER ====================
+    modifier beforeStaking(){
+        updateMiningPool();
+        _;
+        reinvest();
+    }
 
-    constructor ()  {
+    constructor (
+        address metaFinanceIssuePoolAddress_
+    )  {
 
         //        MAX = ~uint256(0);
         //        _tTotal = 10 * 10 ** 30;
@@ -31,83 +40,64 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         //        _taxFee = 100;
         //        _previousTaxFee = 100;
 
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _rOwned[address(this)] = _rTotal;
-        _isExcludedFromFee[address(this)] = true;
         _isExcluded[address(this)] = true;
-
+        _isExcludedFromFee[address(this)] = true;
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _tOwned[address(this)] = tokenFromReflection(_rOwned[address(this)]);
+        metaFinanceIssuePoolAddress = IMetaFinanceIssuePool(metaFinanceIssuePoolAddress_);
+
     }
+
+    // ==================== EXTERNAL ====================
 
     /**
     * @dev User pledge cake
     * @param amount_ User pledge amount
     */
     function userDeposit(uint256 amount_) external beforeStaking nonReentrant {
-        require(amount_ > 10000, "MFTP:E1");
+        require(amount_ > 1 * 10 ** 10, "MFTP:E1");
 
-
-        // 用户质押数量 += 质押数量
-        userPledgeAmount[_msgSender()] += amount_;
-        // 总质押量 += 质押数量
-        totalPledgeAmount += amount_;
-        //updateMiningPool();
-        // 当前合约为用户进行正常转账
-        takenTransfer(address(this), _msgSender(), amount_);
-        //收取用户cake
+        userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].add(amount_);
         cakeTokenAddress.safeTransferFrom(_msgSender(), address(this), amount_);
-        //totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-
-        //reinvest();
+        metaFinanceIssuePoolAddress.stake(_msgSender(), amount_);
+        takenTransfer(address(this), _msgSender(), amount_);
+        totalPledgeAmount = totalPledgeAmount.add(amount_);
+        foundationData[userFoundation[_msgSender()]] = foundationData[userFoundation[_msgSender()]].add(amount_);
 
         emit UserPledgeCake(_msgSender(), amount_, block.timestamp);
     }
-
 
     /**
     * @dev User releases cake
     * @param amount_ User withdraw amount
     */
     function userWithdraw(uint256 amount_) external beforeStaking nonReentrant {
-        // 检查用户获取数量 与 用户质押数量
-        require(amount_ > 10000 && amount_ <= userPledgeAmount[_msgSender()], "MFTP:E2");
+        require(amount_ > 10 ** 10 && amount_ <= userPledgeAmount[_msgSender()], "MFTP:E2");
 
-        //updateMiningPool();
-
-        // 用户奖励数量 = 奖励金额 - 用户质押金额
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
-        if (numberOfAwards > 0) {
+        if (numberOfAwards > 0)
             cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
-        }
-        userPledgeAmount[_msgSender()] -= amount_;
-        totalPledgeAmount -= amount_;
-        // 用户退出
-        takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
+
+        userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].sub(amount_);
         cakeTokenAddress.safeTransfer(_msgSender(), amount_);
-
-        //totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-
-        //reinvest();
+        metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
+        takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
+        totalPledgeAmount = totalPledgeAmount.sub(amount_);
+        foundationData[userFoundation[_msgSender()]] = foundationData[userFoundation[_msgSender()]].sub(amount_);
 
         emit UserWithdrawCake(_msgSender(), amount_, block.timestamp);
     }
 
     /**
-    * @dev 用户获取奖励cake
+    * @dev User gets reward cake
     */
     function userGetReward() external beforeStaking nonReentrant {
-        // 用户奖励数量 = 奖励金额 - 用户质押金额
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
-        require(numberOfAwards > 0, "MFTP:E3");
+        require(numberOfAwards > 10 ** 10, "MFTP:E3");
 
-        // updateMiningPool();
-
-        takenTransfer(_msgSender(), address(this), numberOfAwards);
         cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
-
-        //totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-
-        //reinvest();
+        takenTransfer(_msgSender(), address(this), numberOfAwards);
 
         emit UserReceiveCake(_msgSender(), numberOfAwards, block.timestamp);
     }
@@ -126,8 +116,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
 
     /**
     * @dev Upload mining pool ratio
+    * @param storageProportion_ Array of mining pool ratios
+    * @param smartChefArray_ Mining pool address
     */
-    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) public beforeStaking{
+    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) public beforeStaking {
         require(storageProportion_.length == smartChefArray_.length, "MFTP:E2");
         smartChefArray = smartChefArray_;
         for (uint256 i; i < smartChefArray_.length; i++) {
@@ -135,9 +127,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         }
     }
 
-    function renewPool() public beforeStaking {
-
-    }
+    /**
+    * @dev Anyone can update the pool
+    */
+    function renewPool() public beforeStaking {}
 
     /**
     * @dev Update mining pool
@@ -145,18 +138,15 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     *         and will experience token swap to cake token,
     *         and increase the rewards for all users
     */
-    function updateMiningPool() public {
+    function updateMiningPool() private {
         if (totalPledgeAmount != 0) {
             for (uint256 i; i < smartChefArray.length; i++) {
                 smartChefArray[i].withdraw(storageQuantity[smartChefArray[i]]);
                 address[] memory path = new address[](2);
                 path[0] = smartChefArray[i].rewardToken();
                 path[1] = address(cakeTokenAddress);
-                // 将奖励兑换成cake
                 swapTokensForCake(IERC20Metadata(path[0]), path);
             }
-            // 当前cake总数 - 上次记录的cake总数 = 得到奖励数量
-            // 并进行自我转账实现销毁分发
             takenTransfer(address(this), address(this), (cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue));
         }
     }
@@ -164,31 +154,24 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     /**
     * @dev Bulk pledge
     */
-    function reinvest() public {
-        //if (totalPledgeAmount != 0) {
-        // 计算当前cake数量
+    function reinvest() private {
         totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
         if (totalPledgeValue != 0) {
             uint256 _frontProportionAmount = 0;
             uint256 _arrayUpperLimit = smartChefArray.length - 1;
-            //if (smartChefArray.length > 1) {
             for (uint256 i; i < (_arrayUpperLimit + 1); i++) {
                 if (i != _arrayUpperLimit) {
-                    // 计算cake在每个矿池的质押数量
                     storageQuantity[smartChefArray[i]] = (totalPledgeValue.mul(storageProportion[smartChefArray[i]])).div(proportion);
                     _frontProportionAmount += storageQuantity[smartChefArray[i]];
                 }
                 if (i == _arrayUpperLimit)
                     storageQuantity[smartChefArray[i]] = totalPledgeValue.sub(_frontProportionAmount);
             }
-        for (uint256 i; i < (_arrayUpperLimit + 1); i++) {
-            cakeTokenAddress.safeApprove(address(smartChefArray[i]), 0);
-            cakeTokenAddress.safeApprove(address(smartChefArray[i]), storageQuantity[smartChefArray[i]]);
-            //[10,30,60]
-            // 在矿池中质押计算好的质押数量
-            smartChefArray[i].deposit(storageQuantity[smartChefArray[i]]);
-            //["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db"]
-        }
+            for (uint256 i; i < (_arrayUpperLimit + 1); i++) {
+                cakeTokenAddress.safeApprove(address(smartChefArray[i]), 0);
+                cakeTokenAddress.safeApprove(address(smartChefArray[i]), storageQuantity[smartChefArray[i]]);
+                smartChefArray[i].deposit(storageQuantity[smartChefArray[i]]);
+            }
         }
     }
 
@@ -217,20 +200,51 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         );
     }
 
-    modifier beforeStaking(){
-        updateMiningPool();
-        _;
-        //reinvest();
+    /**
+    * @dev claim Tokens
+    * @param token Token address(address(0) == ETH)
+    * @param amount Claim amount
+    */
+    function claimTokens(
+        address token,
+        address to,
+        uint256 amount
+    ) public onlyRole(MONEY_ADMINISTRATOR) {
+        if (amount > 0) {
+            if (token == address(0)) {
+                payable(to).transfer(amount);
+            } else {
+                IERC20Metadata(token).safeTransfer(to, amount);
+            }
+        }
     }
 
+    /**
+    * @dev Query the user's current principal amount
+    * @param account_ Account address
+    */
+    function rewardBalanceOf(address account_) public view returns (uint256) {
+        if (_isExcluded[account_]) return _tOwned[account_];
+        return tokenFromReflection(_rOwned[account_]);
+    }
+
+    /**
+    * @dev User binding foundation
+    * @param userAddress_ User address
+    * @param foundationAddress_ Foundation address
+    */
+    function boundFoundation(address userAddress_, address foundationAddress_) public {
+        require(userFoundation[userAddress_] == address(0), "MFTP:E4");
+        userFoundation[userAddress_] = foundationAddress_;
+    }
     // ==================== INTERNAL ====================
     /**
-    * @dev 内部资金转账
-    * @param from 转账人地址
-    * @param to 收款人地址
-    * @param amount 转账数量
+    * @dev Internal Funds Transfer
+    * @param from Transfer address
+    * @param to Payee Address
+    * @param amount Number of transfers
     */
-    function takenTransfer(address from, address to, uint256 amount) public {
+    function takenTransfer(address from, address to, uint256 amount) private {
 
         if (from == address(this) && from == to) {
             _isExcludedFromFee[from] = false;
@@ -243,22 +257,13 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         _tokenTransfer(from, to, amount, takeFee);
     }
 
-    /**
-    * @dev 查询用户当前本金数量
-    * @param account 账户地址
-    */
-    function rewardBalanceOf(address account) public view returns (uint256) {
-        if (_isExcluded[account]) return _tOwned[account];
-        return tokenFromReflection(_rOwned[account]);
-    }
-
     function tokenFromReflection(uint256 rAmount) private view returns (uint256) {
         require(rAmount <= _rTotal, "Amount must be less than total reflections");
         uint256 currentRate = _getRate();
         return rAmount.div(currentRate);
     }
 
-    function _getTValues(uint256 tAmount) private view returns (uint256, uint256/*, uint256*/) {
+    function _getTValues(uint256 tAmount) private view returns (uint256, uint256) {
         uint256 tFee = tAmount.mul(_taxFee).div(10 ** 2);
         uint256 tTransferAmount = tAmount.sub(tFee);
         return (tTransferAmount, tFee);
@@ -335,25 +340,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
         _rTotal = _rTotal.sub(rFee);
-    }
-
-    /**
-    * @dev claim Tokens
-    * @param token Token address(address(0) == ETH)
-    * @param amount Claim amount
-    */
-    function claimTokens(
-        address token,
-        address to,
-        uint256 amount
-    ) public onlyRole(MONEY_ADMINISTRATOR) {
-        if (amount > 0) {
-            if (token == address(0)) {
-                payable(to).transfer(amount);
-            } else {
-                IERC20Metadata(token).safeTransfer(to, amount);
-            }
-        }
     }
 
     receive() external payable {}

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.6;
 
 import "../interfaces/MfiInterfaces.sol";
-
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -11,9 +10,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 contract MfiStorages {
     // ==================== PUBLIC ====================
-    uint256 public  MAX = ~uint256(0);
     uint256 public totalPledgeValue;
     uint256 public totalPledgeAmount;
+    address public vaultContractAddress;
+    IMetaFinanceIssuePool public metaFinanceIssuePoolAddress;
 
     uint256 public proportion = 100;
     /// @notice main chain
@@ -26,11 +26,16 @@ contract MfiStorages {
 
     // 矿池数组
     ISmartChefInitializable[] public smartChefArray;
-    // 存储数量
-    mapping(ISmartChefInitializable => uint256)public  storageQuantity;
-    // 存储比例
-    mapping(ISmartChefInitializable => uint256)public storageProportion;
-
+    // 俱乐部数据
+    mapping(address => uint256) public foundationData;
+    // 用户俱乐部信息
+    mapping(address => address) public userFoundation;
     // 用户质押数量
-    mapping(address => uint256)public userPledgeAmount;
+    mapping(address => uint256) public userPledgeAmount;
+    // 存储数量
+    mapping(ISmartChefInitializable => uint256) public storageQuantity;
+    // 存储比例
+    mapping(ISmartChefInitializable => uint256) public storageProportion;
+
+
 }
