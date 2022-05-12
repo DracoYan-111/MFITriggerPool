@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "./events/MfiEvents.sol";
-import "./storages/MfiStorages.sol";
-import "./utils/MfiAccessControl.sol";
+import "../events/MfiEvents.sol";
+import "../storages/MfiStorages.sol";
+import "../utils/MfiAccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -31,7 +31,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         //        _taxFee = 100;
         //        _previousTaxFee = 100;
 
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _rOwned[address(this)] = _rTotal;
         _isExcludedFromFee[address(this)] = true;
         _isExcluded[address(this)] = true;
@@ -40,94 +39,41 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     /**
-    * @dev User pledge cake
-    * @param amount_ User pledge amount
+    * @dev 用户质押cake
+    * @param amount_ 用户质押数量
     */
-    function userDeposit(uint256 amount_) external beforeStaking nonReentrant {
+    function userDeposit(uint256 amount_) external nonReentrant {
         require(amount_ > 10000, "MFTP:E1");
 
+        updateMiningPool(smartChefArray);
 
-        // 用户质押数量 += 质押数量
-        userPledgeAmount[_msgSender()] += amount_;
-        // 总质押量 += 质押数量
-        totalPledgeAmount += amount_;
-        //updateMiningPool();
-        // 当前合约为用户进行正常转账
-        takenTransfer(address(this), _msgSender(), amount_);
-        //收取用户cake
         cakeTokenAddress.safeTransferFrom(_msgSender(), address(this), amount_);
-        //totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
+        takenTransfer(address(this), _msgSender(), amount_);
+        userPledgeAmount[_msgSender()] += amount_;
+        totalPledgeAmount = cakeTokenAddress.balanceOf(address(this));
 
-        //reinvest();
+        reinvest();
 
         emit UserPledgeCake(_msgSender(), amount_, block.timestamp);
     }
 
-
     /**
-    * @dev User releases cake
-    * @param amount_ User withdraw amount
+    * @dev 计算质押金额
+    *
+    *
     */
-    function userWithdraw(uint256 amount_) external beforeStaking nonReentrant {
-        // 检查用户获取数量 与 用户质押数量
-        require(amount_ > 10000 && amount_ <= userPledgeAmount[_msgSender()], "MFTP:E2");
-
-        //updateMiningPool();
-
-        // 用户奖励数量 = 奖励金额 - 用户质押金额
-        uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
-        if (numberOfAwards > 0) {
-            cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
-        }
-        userPledgeAmount[_msgSender()] -= amount_;
-        totalPledgeAmount -= amount_;
-        // 用户退出
-        takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
-        cakeTokenAddress.safeTransfer(_msgSender(), amount_);
-
-        //totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-
-        //reinvest();
-
-        emit UserWithdrawCake(_msgSender(), amount_, block.timestamp);
-    }
-
-    /**
-    * @dev 用户获取奖励cake
-    */
-    function userGetReward() external beforeStaking nonReentrant {
-        // 用户奖励数量 = 奖励金额 - 用户质押金额
-        uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
-        require(numberOfAwards > 0, "MFTP:E3");
-
-        // updateMiningPool();
-
-        takenTransfer(_msgSender(), address(this), numberOfAwards);
-        cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
-
-        //totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-
-        //reinvest();
-
-        emit UserReceiveCake(_msgSender(), numberOfAwards, block.timestamp);
-    }
-
-    /**
-    * @dev Withdraw staked tokens without caring about rewards rewards
-    * @dev Needs to be for emergency.
-    */
-    function projectPartyEmergencyWithdraw() public {
-        if (totalPledgeAmount != 0) {
-            for (uint256 i; i < smartChefArray.length; i++) {
-                smartChefArray[i].emergencyWithdraw();
-            }
+    function calculateThePledgeAmount(uint256 amount_) private {
+        for (uint256 i; i < smartChefArray.length; i++) {
+            storageQuantity[smartChefArray[i]] = (amount_.mul(storageProportion[smartChefArray[i]])).div(proportion);
         }
     }
 
     /**
-    * @dev Upload mining pool ratio
+    * @dev 上传矿池比例
+    *
+    *
     */
-    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) public beforeStaking{
+    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) public {
         require(storageProportion_.length == smartChefArray_.length, "MFTP:E2");
         smartChefArray = smartChefArray_;
         for (uint256 i; i < smartChefArray_.length; i++) {
@@ -135,92 +81,71 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         }
     }
 
-    function renewPool() public beforeStaking {
-
+    modifier BeforeStaking(ISmartChefInitializable[] memory smartChefArray_){
+        updateMiningPool(smartChefArray_);
+        _;
+        reinvest();
     }
 
+
     /**
-    * @dev Update mining pool
-    * @notice Batch withdraw,
-    *         and will experience token swap to cake token,
-    *         and increase the rewards for all users
+    * @dev 更新矿池
+    *
+    *
     */
-    function updateMiningPool() public {
-        if (totalPledgeAmount != 0) {
-            for (uint256 i; i < smartChefArray.length; i++) {
-                smartChefArray[i].withdraw(storageQuantity[smartChefArray[i]]);
+    function updateMiningPool(ISmartChefInitializable[] memory smartChefArray_) public {
+        //if (totalPledgeAmount != 0) {
+            for (uint256 i; i < smartChefArray_.length; i++) {
+                address s = (smartChefArray_[i].rewardToken());
+                smartChefArray_[i].withdraw(IERC20Metadata(s).balanceOf((address(smartChefArray_[i]))));
                 address[] memory path = new address[](2);
-                path[0] = smartChefArray[i].rewardToken();
+                path[0] = smartChefArray_[i].rewardToken();
                 path[1] = address(cakeTokenAddress);
-                // 将奖励兑换成cake
-                swapTokensForCake(IERC20Metadata(path[0]), path);
+                swapTokensForUsdt(IERC20Metadata(path[0]), path);
             }
-            // 当前cake总数 - 上次记录的cake总数 = 得到奖励数量
-            // 并进行自我转账实现销毁分发
-            takenTransfer(address(this), address(this), (cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue));
-        }
+        //}
     }
 
     /**
-    * @dev Bulk pledge
+    * @dev 复投
+    *
+    *
+    *
     */
     function reinvest() public {
-        //if (totalPledgeAmount != 0) {
-        // 计算当前cake数量
-        totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-        if (totalPledgeValue != 0) {
-            uint256 _frontProportionAmount = 0;
-            uint256 _arrayUpperLimit = smartChefArray.length - 1;
-            //if (smartChefArray.length > 1) {
-            for (uint256 i; i < (_arrayUpperLimit + 1); i++) {
-                if (i != _arrayUpperLimit) {
-                    // 计算cake在每个矿池的质押数量
-                    storageQuantity[smartChefArray[i]] = (totalPledgeValue.mul(storageProportion[smartChefArray[i]])).div(proportion);
-                    _frontProportionAmount += storageQuantity[smartChefArray[i]];
-                }
-                if (i == _arrayUpperLimit)
-                    storageQuantity[smartChefArray[i]] = totalPledgeValue.sub(_frontProportionAmount);
+        calculateThePledgeAmount(totalPledgeAmount);
+        if (totalPledgeAmount != 0) {
+            for (uint256 i; i < smartChefArray.length; i++) {
+                smartChefArray[i].deposit(storageQuantity[smartChefArray[i]]);
             }
-        for (uint256 i; i < (_arrayUpperLimit + 1); i++) {
-            cakeTokenAddress.safeApprove(address(smartChefArray[i]), 0);
-            cakeTokenAddress.safeApprove(address(smartChefArray[i]), storageQuantity[smartChefArray[i]]);
-            //[10,30,60]
-            // 在矿池中质押计算好的质押数量
-            smartChefArray[i].deposit(storageQuantity[smartChefArray[i]]);
-            //["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db"]
-        }
         }
     }
 
     /**
     * @dev Swap token
-    * @param tokenAddress Reward token address
-    * @param path Token Path
+    * @param tokenAddress 奖励token地址
+    * @param path 代币路径
     */
-    function swapTokensForCake(
+    function swapTokensForUsdt(
         IERC20Metadata tokenAddress,
         address[] memory path
     ) private {
         uint256 tokenAmount = tokenAddress.balanceOf(address(this));
 
-        tokenAddress.safeApprove(address(pancakeRouterAddress), 0);
-        tokenAddress.safeApprove(address(pancakeRouterAddress), tokenAmount);
+        if (tokenAddress.allowance(address(this), address(pancakeRouterAddress)) < tokenAmount) {
+            tokenAddress.safeApprove(address(pancakeRouterAddress), 0);
+            tokenAddress.safeApprove(address(pancakeRouterAddress), ~uint256(0));
+        }
 
-        // address(this) Reward token -> address(uniswapV2Pair)
-        // address(uniswapV2Pair) cake -> address(this)
+        //token:address(this) token -> address(uniswapV2Pair)
+        //usdt:address(uniswapV2Pair) token -> address(this)
         pancakeRouterAddress.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             tokenAmount,
-            0, // accept any amount of cake
+            0, // accept any amount of usdt
             path,
             address(this),
             block.timestamp + 10
         );
-    }
-
-    modifier beforeStaking(){
-        updateMiningPool();
-        _;
-        //reinvest();
     }
 
     // ==================== INTERNAL ====================
@@ -230,7 +155,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param to 收款人地址
     * @param amount 转账数量
     */
-    function takenTransfer(address from, address to, uint256 amount) public {
+    function takenTransfer(address from, address to, uint256 amount) private {
 
         if (from == address(this) && from == to) {
             _isExcludedFromFee[from] = false;
@@ -247,7 +172,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @dev 查询用户当前本金数量
     * @param account 账户地址
     */
-    function rewardBalanceOf(address account) public view returns (uint256) {
+    function rewardBalanceOf(address account) external view returns (uint256) {
         if (_isExcluded[account]) return _tOwned[account];
         return tokenFromReflection(_rOwned[account]);
     }
@@ -344,14 +269,13 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     */
     function claimTokens(
         address token,
-        address to,
         uint256 amount
-    ) public onlyRole(MONEY_ADMINISTRATOR) {
+    ) public  {
         if (amount > 0) {
             if (token == address(0)) {
-                payable(to).transfer(amount);
+                payable(_msgSender()).transfer(amount);
             } else {
-                IERC20Metadata(token).safeTransfer(to, amount);
+                IERC20Metadata(token).safeTransfer(_msgSender(), amount);
             }
         }
     }

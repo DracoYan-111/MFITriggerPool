@@ -1,0 +1,455 @@
+{
+  "contractName": "MfiEvents",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_pledgeAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "UserPledgeCake",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_receiveAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "UserReceiveCake",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_withdrawAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "UserWithdrawCake",
+      "type": "event"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_userAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_pledgeAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_timestamp\",\"type\":\"uint256\"}],\"name\":\"UserPledgeCake\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_userAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_receiveAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_timestamp\",\"type\":\"uint256\"}],\"name\":\"UserReceiveCake\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_userAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_withdrawAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_timestamp\",\"type\":\"uint256\"}],\"name\":\"UserWithdrawCake\",\"type\":\"event\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/events/MfiEvents.sol\":\"MfiEvents\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/events/MfiEvents.sol\":{\"keccak256\":\"0xe87974eab28d255505714d90e510ea70c2099790b3da85f72748148ed8286ccc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5a33e2d848153a74b1fc1cb91264a00b97e2b746cf3bbb5bba06894f6cf0141d\",\"dweb:/ipfs/QmdX3m7Ko116nvLZ9s2Sk39kox7oGTS9ZJg6gr2pkBC211\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220cffa7c4680e186df35b97038cb331e6c92a53ca5bdd7a195dc483bd58a0f79d864736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220cffa7c4680e186df35b97038cb331e6c92a53ca5bdd7a195dc483bd58a0f79d864736f6c634300080d0033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "57:821:48:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "57:821:48:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.6;\n\ncontract MfiEvents {\n    /*\n     * @dev 用户质押事件\n     * @param _userAddress 用户地址\n     * @param _pledgeAmount 用户质押数量\n     * @param _timestamp 质押时间\n     */\n    event UserPledgeCake(address _userAddress, uint256 _pledgeAmount, uint256 _timestamp);\n\n    /*\n     * @dev 用户提现事件\n     * @param _userAddress 用户地址\n     * @param _withdrawAmount 用户提现数量\n     * @param _timestamp 质押时间\n     */\n    event UserWithdrawCake(address _userAddress, uint256 _withdrawAmount, uint256 _timestamp);\n\n    /*\n     * @dev 用户领取事件\n     * @param _userAddress 用户地址\n     * @param _withdrawAmount 用户提现数量\n     * @param _timestamp 质押时间\n     */\n    event UserReceiveCake(address _userAddress, uint256 _receiveAmount, uint256 _timestamp);\n\n}\n",
+  "sourcePath": "/Users/blockinsight/Desktop/myCode/solidity/MFITriggerPool/contracts/events/MfiEvents.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/events/MfiEvents.sol",
+    "exportedSymbols": {
+      "MfiEvents": [
+        6065
+      ]
+    },
+    "id": 6066,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 6040,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:48"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "MfiEvents",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 6065,
+        "linearizedBaseContracts": [
+          6065
+        ],
+        "name": "MfiEvents",
+        "nameLocation": "66:9:48",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "eventSelector": "ac20f81b6887b3ec2edb30a1d25d8ecdcccabb77c0fba5551a2c7a7680be8a65",
+            "id": 6048,
+            "name": "UserPledgeCake",
+            "nameLocation": "259:14:48",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 6047,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6042,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_userAddress",
+                  "nameLocation": "282:12:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6048,
+                  "src": "274:20:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 6041,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "274:7:48",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6044,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_pledgeAmount",
+                  "nameLocation": "304:13:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6048,
+                  "src": "296:21:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6043,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "296:7:48",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6046,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_timestamp",
+                  "nameLocation": "327:10:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6048,
+                  "src": "319:18:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6045,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "319:7:48",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "273:65:48"
+            },
+            "src": "253:86:48"
+          },
+          {
+            "anonymous": false,
+            "eventSelector": "b20f510d0e083e88ab8f33589570107a01d2f94753d77980735e7f36a1c22102",
+            "id": 6056,
+            "name": "UserWithdrawCake",
+            "nameLocation": "524:16:48",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 6055,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6050,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_userAddress",
+                  "nameLocation": "549:12:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6056,
+                  "src": "541:20:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 6049,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "541:7:48",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6052,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_withdrawAmount",
+                  "nameLocation": "571:15:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6056,
+                  "src": "563:23:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6051,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "563:7:48",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6054,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_timestamp",
+                  "nameLocation": "596:10:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6056,
+                  "src": "588:18:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6053,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "588:7:48",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "540:67:48"
+            },
+            "src": "518:90:48"
+          },
+          {
+            "anonymous": false,
+            "eventSelector": "51c4ee1284a735c257d7b274199b5e51b53a2c078b65f9fca2c004157aa9a332",
+            "id": 6064,
+            "name": "UserReceiveCake",
+            "nameLocation": "793:15:48",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 6063,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6058,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_userAddress",
+                  "nameLocation": "817:12:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6064,
+                  "src": "809:20:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 6057,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "809:7:48",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6060,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_receiveAmount",
+                  "nameLocation": "839:14:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6064,
+                  "src": "831:22:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6059,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "831:7:48",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6062,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_timestamp",
+                  "nameLocation": "863:10:48",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6064,
+                  "src": "855:18:48",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6061,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "855:7:48",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "808:66:48"
+            },
+            "src": "787:88:48"
+          }
+        ],
+        "scope": 6066,
+        "src": "57:821:48",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:847:48"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.7",
+  "updatedAt": "2022-05-12T01:36:40.930Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
