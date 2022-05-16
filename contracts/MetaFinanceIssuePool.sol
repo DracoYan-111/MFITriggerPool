@@ -27,7 +27,7 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     uint256 private _totalSupply;
     uint256 public rewardRate = 0;
     uint256 public lastUpdateTime;
-    uint256 public lockDays = 180 days;
+    uint256 public lockDays = 30;//180 days;
     IERC20Metadata public rewardsToken;
     uint256 public rewardPerTokenStored;
 
@@ -38,6 +38,10 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
 
     /* ========== CONSTRUCTOR ========== */
 
+    /**
+    * @dev Constructor
+    * @param _rewardsToken Reward Token Address
+    */
     constructor(address _rewardsToken){
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
@@ -45,32 +49,51 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
 
     /* ========== VIEWS ========== */
 
+    /**
+    * @dev Total pledge amount
+    * @return Returns the total pledge amount
+    */
     function totalSupply() external view returns (uint256) {
         return _totalSupply;
     }
 
+    /**
+    * @dev User pledge amount
+    * @param account_ User address
+    * @return Returns the users pledge amount
+    */
     function balanceOf(address account_) external view returns (uint256) {
         return _balances[account_];
     }
 
-    function lastTimeRewardApplicable() public view returns (uint256) {
-        return Math.min(block.timestamp, MAX);
-    }
-
+    /**
+    * @dev Rewards per token
+    * @return Returns the reward amount for staked tokens
+    */
     function rewardPerToken() public view returns (uint256) {
         if (_totalSupply == 0) {
             return rewardPerTokenStored;
         }
         return
         rewardPerTokenStored.add(
-            lastTimeRewardApplicable().sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply)
+            block.timestamp.sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply)
         );
     }
 
+    /**
+    * @dev View user revenue
+    * @param account_ User address
+    * @return Returns the revenue the user has already earned
+    */
     function earned(address account_) public view returns (uint256) {
         return _balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_]);
     }
 
+    /**
+    * @dev Rewards that users can already claim
+    * @param account_ User address
+    * @return Returns the reward that the user has moderated
+    */
     function userAward(address account_) public view returns (uint256){
         UserPledge memory userData_ = userData[account_];
         if (userData_.startTime == 0) return 0;
@@ -79,6 +102,12 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
 
     /* ========== EXTERNAL ========== */
 
+    /**
+    * @dev User pledge
+    * @notice nonReentrant,updateReward(user address),onlyRole(META_FINANCE_TRIGGER_POOL)
+    * @param account_ User address
+    * @param amount_ Pledge amount
+    */
     function stake(address account_, uint256 amount_) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
         require(amount_ > 0, "MFIP:E1");
         _totalSupply = _totalSupply.add(amount_);
@@ -86,54 +115,72 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
         emit Staked(account_, amount_);
     }
 
-    function withdraw(address account_, uint256 amount) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
-        require(amount > 0, "MFIP:E2");
-        _totalSupply = _totalSupply.sub(amount);
-        _balances[account_] = _balances[account_].sub(amount);
-        emit Withdrawn(account_, amount);
+    /**
+    * @dev User unstakes
+    * @notice nonReentrant,updateReward(user address),onlyRole(META_FINANCE_TRIGGER_POOL)
+    * @param account_ User address
+    * @param amount_ Unstakes amount
+    */
+    function withdraw(address account_, uint256 amount_) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
+        require(amount_ > 0, "MFIP:E2");
+        _totalSupply = _totalSupply.sub(amount_);
+        _balances[account_] = _balances[account_].sub(amount_);
+        emit Withdrawn(account_, amount_);
     }
 
-    function liquidate(address account_) public nonReentrant updateReward(account_) {
-        uint256 reward = rewards[account_];
-        if (reward > lockDays) {
-            rewards[account_] = 0;
-            uint256 blockTimestamp = block.timestamp;
-            UserPledge storage userData_ = userData[account_];
-            userData_.generateQuantity = userAward(account_);
-            userData_.startTime = blockTimestamp;
-            userData_.enderTime = blockTimestamp.add(lockDays);
-            userData_.lastTime = blockTimestamp;
-            userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity);
-            userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
-            //rewardsToken.safeTransfer(account_, reward);
-            //emit RewardPaid(account_, reward);
-        }
+    /**
+    * @dev Users receive staking rewards
+    * @notice nonReentrant,updateReward(account_)
+    */
+    function harvest() external nonReentrant updateReward(_msgSender()) {
+        uint256 reward = rewards[_msgSender()];
+        require(reward >= 10 ** 12, "MFIP:E3");
+        rewards[_msgSender()] = 0;
+        uint256 blockTimestamp = block.timestamp;
+        UserPledge storage userData_ = userData[_msgSender()];
+        uint256 generateQuantity = userData_.generateQuantity;
+        userData_.generateQuantity = userAward(_msgSender());
+        userData_.startTime = blockTimestamp;
+        userData_.enderTime = blockTimestamp.add(lockDays);
+        userData_.lastTime = blockTimestamp;
+        userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity.sub(generateQuantity));
+        userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
     }
 
-    function getReward() public nonReentrant {
+    /**
+    * @dev User gets rewarded
+    * @notice nonReentrant
+    */
+    function getReward() external nonReentrant {
         uint256 reward = userAward(_msgSender());
-        if (reward > 10 ** 10) {
-            userData[_msgSender()].lastTime = Math.min(block.timestamp,userData[_msgSender()].enderTime);
-            rewardsToken.safeTransfer(_msgSender(), reward);
-        }
+        userData[_msgSender()].lastTime = Math.min(block.timestamp, userData[_msgSender()].enderTime);
+        userData[_msgSender()].generateQuantity = 0;
+        block.timestamp >= userData[_msgSender()].enderTime ?
+        userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = userData[_msgSender()].pledgeTotal.sub(reward);
+        //rewardsToken.safeTransfer(_msgSender(), reward);
         emit RewardPaid(_msgSender(), reward);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-    function notifyRewardAmount(uint256 startingTime, uint256 reward) external updateReward(address(0)) onlyRole(DATA_ADMINISTRATOR) {
+    /**
+    * @dev Notification Rewards
+    * @notice updateReward(address(0)) onlyRole(DATA_ADMINISTRATOR)
+    * @param startingTime_ Reward start time
+    * @param reward_ Number of experiences per second
+    */
+    function notifyRewardAmount(uint256 startingTime_, uint256 reward_) external updateReward(address(0)) onlyRole(DATA_ADMINISTRATOR) {
 
-        rewardRate = reward;
+        rewardRate = reward_;
+        lastUpdateTime = startingTime_;
 
-        lastUpdateTime = block.timestamp;//startingTime;
-        emit RewardAdded(reward);
+        emit RewardAdded(reward_);
     }
 
     /* ========== MODIFIERS ========== */
-
     modifier updateReward(address account) {
         rewardPerTokenStored = rewardPerToken();
-        lastUpdateTime = lastTimeRewardApplicable();
+        lastUpdateTime = block.timestamp;
         if (account != address(0)) {
             rewards[account] = earned(account);
             userRewardPerTokenPaid[account] = rewardPerTokenStored;

@@ -30,6 +30,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     constructor (
+        address exchequerAddress_,
         address metaFinanceIssuePoolAddress_
     )  {
 
@@ -38,10 +39,11 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         //        _rTotal = (MAX - (MAX % _tTotal));
         //        _taxFee = 100;
         //        _previousTaxFee = 100;
-
+        exchequerAddress = exchequerAddress_;
         _rOwned[address(this)] = _rTotal;
         _isExcluded[address(this)] = true;
         _isExcludedFromFee[address(this)] = true;
+
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _tOwned[address(this)] = tokenFromReflection(_rOwned[address(this)]);
         metaFinanceIssuePoolAddress = IMetaFinanceIssuePool(metaFinanceIssuePoolAddress_);
@@ -59,6 +61,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
 
         userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].add(amount_);
         cakeTokenAddress.safeTransferFrom(_msgSender(), address(this), amount_);
+        if (userFoundation[_msgSender()] != address(0) && userFoundation[_msgSender()] != exchequerAddress)
+            amount_.add((amount_.mul(clubIncentive)).div(proportion));
         metaFinanceIssuePoolAddress.stake(_msgSender(), amount_);
         takenTransfer(address(this), _msgSender(), amount_);
         totalPledgeAmount = totalPledgeAmount.add(amount_);
@@ -80,9 +84,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
             cakeTokenAddress.safeTransfer(_msgSender(), userRewards);
             cakeTokenAddress.safeTransfer(exchequerAddress, exchequerRewards);
         }
-
         userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].sub(amount_);
         cakeTokenAddress.safeTransfer(_msgSender(), amount_);
+        if (userFoundation[_msgSender()] != address(0) && userFoundation[_msgSender()] != exchequerAddress)
+            amount_.add((amount_.mul(clubIncentive)).div(proportion));
         metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
         takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
         totalPledgeAmount = totalPledgeAmount.sub(amount_);
@@ -97,6 +102,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     function userGetReward() external beforeStaking nonReentrant {
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
         require(numberOfAwards > 10 ** 10, "MFTP:E3");
+
         (uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(_msgSender());
         cakeTokenAddress.safeTransfer(_msgSender(), userRewards);
         cakeTokenAddress.safeTransfer(exchequerAddress, exchequerRewards);
@@ -109,7 +115,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @dev Withdraw staked tokens without caring about rewards rewards
     * @dev Needs to be for emergency.
     */
-    function projectPartyEmergencyWithdraw() public {
+    function projectPartyEmergencyWithdraw() external onlyRole(PROJECT_ADMINISTRATOR) {
         if (totalPledgeAmount != 0) {
             for (uint256 i; i < smartChefArray.length; i++) {
                 smartChefArray[i].emergencyWithdraw();
@@ -122,7 +128,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param storageProportion_ Array of mining pool ratios
     * @param smartChefArray_ Mining pool address
     */
-    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) public beforeStaking {
+    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) external beforeStaking onlyRole(PROJECT_ADMINISTRATOR) {
         require(storageProportion_.length == smartChefArray_.length, "MFTP:E4");
         smartChefArray = smartChefArray_;
         for (uint256 i; i < smartChefArray_.length; i++) {
@@ -133,7 +139,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     /**
     * @dev Anyone can update the pool
     */
-    function renewPool() public beforeStaking {}
+    function renewPool() external beforeStaking {}
 
     /**
     * @dev Update mining pool
@@ -143,14 +149,16 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     */
     function updateMiningPool() private {
         if (totalPledgeAmount != 0) {
+            uint256 cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
             for (uint256 i; i < smartChefArray.length; i++) {
+                uint256 rewardTokenBalanceOf = IERC20Metadata(smartChefArray[i].rewardToken()).balanceOf(address(this));
                 smartChefArray[i].withdraw(storageQuantity[smartChefArray[i]]);
                 address[] memory path = new address[](2);
                 path[0] = smartChefArray[i].rewardToken();
                 path[1] = address(cakeTokenAddress);
-                swapTokensForCake(IERC20Metadata(path[0]), path);
+                swapTokensForCake(IERC20Metadata(path[0]), path, rewardTokenBalanceOf);
             }
-            takenTransfer(address(this), address(this), (cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue));
+            takenTransfer(address(this), address(this), ((cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue)).sub(cakeTokenBalanceOf));
         }
     }
 
@@ -159,7 +167,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     */
     function reinvest() private {
         totalPledgeValue = cakeTokenAddress.balanceOf(address(this));
-        if (totalPledgeValue != 0) {
+        if (totalPledgeValue > 1000) {
             uint256 _frontProportionAmount = 0;
             uint256 _arrayUpperLimit = smartChefArray.length - 1;
             for (uint256 i; i < (_arrayUpperLimit + 1); i++) {
@@ -185,9 +193,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     */
     function swapTokensForCake(
         IERC20Metadata tokenAddress,
-        address[] memory path
+        address[] memory path,
+        uint256 oldBalanceOf
     ) private {
-        uint256 tokenAmount = tokenAddress.balanceOf(address(this));
+        uint256 tokenAmount = tokenAddress.balanceOf(address(this)).sub(oldBalanceOf);
 
         tokenAddress.safeApprove(address(pancakeRouterAddress), 0);
         tokenAddress.safeApprove(address(pancakeRouterAddress), tokenAmount);
@@ -212,7 +221,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         address token,
         address to,
         uint256 amount
-    ) public onlyRole(MONEY_ADMINISTRATOR) {
+    ) external onlyRole(MONEY_ADMINISTRATOR) {
         if (amount > 0) {
             if (token == address(0)) {
                 payable(to).transfer(amount);
