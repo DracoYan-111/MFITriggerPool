@@ -13,15 +13,14 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
 
     // ==================== PRIVATE ====================
 
+    uint256 private  _taxFee = 100;
+    uint256 private  _tTotal = 10 ** 50;
+    uint256 private  _previousTaxFee = 100;
     mapping(address => uint256) private _rOwned;
     mapping(address => uint256) private _tOwned;
     mapping(address => bool) private _isExcluded;
-    mapping(address => bool) private _isExcludedFromFee;
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
-    uint256 private  _tTotal = 1 * 10 ** 50;
-    uint256 private  _previousTaxFee = 100;
-    uint256 private  _taxFee = 100;
-
+    mapping(address => bool) private _isExcludedFromFee;
 
     // ==================== MODIFIER ====================
     modifier beforeStaking(){
@@ -56,7 +55,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param amount_ User pledge amount
     */
     function userDeposit(uint256 amount_) external beforeStaking nonReentrant {
-        require(amount_ > 1 * 10 ** 10, "MFTP:E1");
+        require(amount_ >= 10 ** 18, "MFTP:E1");
 
         userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].add(amount_);
         cakeTokenAddress.safeTransferFrom(_msgSender(), address(this), amount_);
@@ -73,11 +72,14 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param amount_ User withdraw amount
     */
     function userWithdraw(uint256 amount_) external beforeStaking nonReentrant {
-        require(amount_ > 10 ** 10 && amount_ <= userPledgeAmount[_msgSender()], "MFTP:E2");
+        require(amount_ >= 10 ** 18 && amount_ <= userPledgeAmount[_msgSender()], "MFTP:E2");
 
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
-        if (numberOfAwards > 0)
-            cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
+        if (numberOfAwards > 0) {
+            (uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(_msgSender());
+            cakeTokenAddress.safeTransfer(_msgSender(), userRewards);
+            cakeTokenAddress.safeTransfer(exchequerAddress, exchequerRewards);
+        }
 
         userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].sub(amount_);
         cakeTokenAddress.safeTransfer(_msgSender(), amount_);
@@ -95,8 +97,9 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     function userGetReward() external beforeStaking nonReentrant {
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
         require(numberOfAwards > 10 ** 10, "MFTP:E3");
-
-        cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
+        (uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(_msgSender());
+        cakeTokenAddress.safeTransfer(_msgSender(), userRewards);
+        cakeTokenAddress.safeTransfer(exchequerAddress, exchequerRewards);
         takenTransfer(_msgSender(), address(this), numberOfAwards);
 
         emit UserReceiveCake(_msgSender(), numberOfAwards, block.timestamp);
@@ -120,7 +123,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param smartChefArray_ Mining pool address
     */
     function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) public beforeStaking {
-        require(storageProportion_.length == smartChefArray_.length, "MFTP:E2");
+        require(storageProportion_.length == smartChefArray_.length, "MFTP:E4");
         smartChefArray = smartChefArray_;
         for (uint256 i; i < smartChefArray_.length; i++) {
             storageProportion[smartChefArray_[i]] = storageProportion_[i];
@@ -222,6 +225,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     /**
     * @dev Query the user's current principal amount
     * @param account_ Account address
+    * @return User principal plus all reward
     */
     function rewardBalanceOf(address account_) public view returns (uint256) {
         if (_isExcluded[account_]) return _tOwned[account_];
@@ -229,13 +233,23 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     /**
+    * @dev User Rewards and Treasury Rewards
+    * @param account_ Account address
+    * @return User rewards, Treasury rewards
+    */
+    function totalUserRewards(address account_) public view returns (uint256, uint256) {
+        uint256 oldRewardBalanceOf = rewardBalanceOf(account_).sub(userPledgeAmount[_msgSender()]);
+        uint256 userRewardBalanceOf = oldRewardBalanceOf.mul(treasuryRatio).div(proportion);
+        return (userRewardBalanceOf, (oldRewardBalanceOf.sub(userRewardBalanceOf)));
+    }
+
+    /**
     * @dev User binding foundation
-    * @param userAddress_ User address
     * @param foundationAddress_ Foundation address
     */
-    function boundFoundation(address userAddress_, address foundationAddress_) public {
-        require(userFoundation[userAddress_] == address(0), "MFTP:E4");
-        userFoundation[userAddress_] = foundationAddress_;
+    function boundFoundation(address foundationAddress_) public {
+        require(userFoundation[_msgSender()] == address(0) && foundationAddress_ != _msgSender(), "MFTP:E5");
+        userFoundation[_msgSender()] = foundationAddress_;
     }
     // ==================== INTERNAL ====================
     /**
@@ -258,7 +272,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     function tokenFromReflection(uint256 rAmount) private view returns (uint256) {
-        require(rAmount <= _rTotal, "Amount must be less than total reflections");
+        require(rAmount <= _rTotal, "MFTP:E6");
         uint256 currentRate = _getRate();
         return rAmount.div(currentRate);
     }

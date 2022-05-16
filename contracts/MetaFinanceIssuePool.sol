@@ -7,31 +7,40 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 
-contract StakingRewards is Context, ReentrancyGuard, MfiAccessControl {
+contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     using SafeMath for uint256;
-    using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20Metadata;
 
     /* ========== STATE VARIABLES ========== */
-
-    IERC20 public rewardsToken;
-    uint256 public rewardRate = 0;
-    uint256 public lastUpdateTime;
-    uint256 public rewardPerTokenStored;
-
-    mapping(address => uint256) public userRewardPerTokenPaid;
-    mapping(address => uint256) public rewards;
+    struct UserPledge {
+        uint256 pledgeTotal;
+        uint256 startTime;
+        uint256 enderTime;
+        uint256 lastTime;
+        uint256 generateQuantity;
+        uint256 numberOfRewardsPerSecond;
+    }
 
     uint256 private _totalSupply;
+    uint256 public rewardRate = 0;
+    uint256 public lastUpdateTime;
+    uint256 public lockDays = 180 days;
+    IERC20Metadata public rewardsToken;
+    uint256 public rewardPerTokenStored;
+
+    mapping(address => uint256) public rewards;
     mapping(address => uint256) private _balances;
+    mapping(address => UserPledge) public userData;
+    mapping(address => uint256) public userRewardPerTokenPaid;
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(
-        address _rewardsToken
-    ){
-        rewardsToken = IERC20(_rewardsToken);
+    constructor(address _rewardsToken){
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        rewardsToken = IERC20Metadata(_rewardsToken);
     }
 
     /* ========== VIEWS ========== */
@@ -40,8 +49,8 @@ contract StakingRewards is Context, ReentrancyGuard, MfiAccessControl {
         return _totalSupply;
     }
 
-    function balanceOf(address account) external view returns (uint256) {
-        return _balances[account];
+    function balanceOf(address account_) external view returns (uint256) {
+        return _balances[account_];
     }
 
     function lastTimeRewardApplicable() public view returns (uint256) {
@@ -58,31 +67,56 @@ contract StakingRewards is Context, ReentrancyGuard, MfiAccessControl {
         );
     }
 
-    function earned(address account) public view returns (uint256) {
-        return _balances[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
+    function earned(address account_) public view returns (uint256) {
+        return _balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_]);
     }
 
-    function stake(address userAddress, uint256 amount) external nonReentrant updateReward(userAddress) onlyRole(META_FINANCE_TRIGGER_POOL) {
-        require(amount > 0, "Cannot stake 0");
-        _totalSupply = _totalSupply.add(amount);
-        _balances[userAddress] = _balances[userAddress].add(amount);
-        emit Staked(userAddress, amount);
+    function userAward(address account_) public view returns (uint256){
+        UserPledge memory userData_ = userData[account_];
+        if (userData_.startTime == 0) return 0;
+        return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
     }
 
-    function withdraw(address userAddress, uint256 amount) external nonReentrant updateReward(userAddress) onlyRole(META_FINANCE_TRIGGER_POOL) {
-        require(amount > 0, "Cannot withdraw 0");
+    /* ========== EXTERNAL ========== */
+
+    function stake(address account_, uint256 amount_) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
+        require(amount_ > 0, "MFIP:E1");
+        _totalSupply = _totalSupply.add(amount_);
+        _balances[account_] = _balances[account_].add(amount_);
+        emit Staked(account_, amount_);
+    }
+
+    function withdraw(address account_, uint256 amount) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
+        require(amount > 0, "MFIP:E2");
         _totalSupply = _totalSupply.sub(amount);
-        _balances[userAddress] = _balances[userAddress].sub(amount);
-        emit Withdrawn(userAddress, amount);
+        _balances[account_] = _balances[account_].sub(amount);
+        emit Withdrawn(account_, amount);
     }
 
-    function getReward() external nonReentrant updateReward(_msgSender()) {
-        uint256 reward = rewards[_msgSender()];
-        if (reward > 0) {
-            rewards[_msgSender()] = 0;
-            rewardsToken.safeTransfer(_msgSender(), reward);
-            emit RewardPaid(_msgSender(), reward);
+    function liquidate(address account_) public nonReentrant updateReward(account_) {
+        uint256 reward = rewards[account_];
+        if (reward > lockDays) {
+            rewards[account_] = 0;
+            uint256 blockTimestamp = block.timestamp;
+            UserPledge storage userData_ = userData[account_];
+            userData_.generateQuantity = userAward(account_);
+            userData_.startTime = blockTimestamp;
+            userData_.enderTime = blockTimestamp.add(lockDays);
+            userData_.lastTime = blockTimestamp;
+            userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity);
+            userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
+            //rewardsToken.safeTransfer(account_, reward);
+            //emit RewardPaid(account_, reward);
         }
+    }
+
+    function getReward() public nonReentrant {
+        uint256 reward = userAward(_msgSender());
+        if (reward > 10 ** 10) {
+            userData[_msgSender()].lastTime = Math.min(block.timestamp,userData[_msgSender()].enderTime);
+            rewardsToken.safeTransfer(_msgSender(), reward);
+        }
+        emit RewardPaid(_msgSender(), reward);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -91,7 +125,7 @@ contract StakingRewards is Context, ReentrancyGuard, MfiAccessControl {
 
         rewardRate = reward;
 
-        lastUpdateTime = startingTime;
+        lastUpdateTime = block.timestamp;//startingTime;
         emit RewardAdded(reward);
     }
 
