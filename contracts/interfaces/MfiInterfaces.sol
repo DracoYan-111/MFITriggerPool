@@ -322,4 +322,15 @@ interface IPancakeRouter02 is IPancakeRouter01 {
     ) external;
 }
 
+/**
+ * @title MetaFinanceClubInfo contract interface
+ */
+interface IMetaFinanceClubInfo {
+    function boundClub(address clubAddress_) external;
 
+    function calculateReward(address clubAddress_, address tokenAddress_, uint256 amount_, bool addOrSub_) external;
+
+    function userClub(address userAddress_) external view returns (address);
+
+    function clubIncentive() external view returns (uint256);
+}

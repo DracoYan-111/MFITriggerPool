@@ -11,17 +11,19 @@ contract MfiStorages {
     uint256 public proportion = 100;
     uint256 public totalPledgeValue;
     uint256 public totalPledgeAmount;
-    uint256 public clubIncentive = 10;
+    //uint256 public clubIncentive = 10;
     uint256 public treasuryRatio = 50;
+    uint256 public exchequerAmount;
     address public exchequerAddress;
-    address public vaultContractAddress;
+    uint256 public cakeTokenBalanceOf;
+    IMetaFinanceClubInfo public metaFinanceClubInfo;
     ISmartChefInitializable[] public smartChefArray;
     IMetaFinanceIssuePool public metaFinanceIssuePoolAddress;
 
     // club data
-    mapping(address => uint256) public foundationData;
+    //mapping(address => uint256) public foundationData;
     // User Club Information
-    mapping(address => address) public userFoundation;
+    //mapping(address => address) public userFoundation;
     // User pledge amount
     mapping(address => uint256) public userPledgeAmount;
     // Storage quantity
