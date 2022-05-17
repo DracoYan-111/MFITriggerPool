@@ -24,7 +24,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
 
     // ==================== MODIFIER ====================
     modifier beforeStaking(){
-        require(metaFinanceClubInfo.userClub(_msgSender()) != address(0), "MFTP:E0");
         updateMiningPool();
         _;
         reinvest();
@@ -60,18 +59,16 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param amount_ User pledge amount
     */
     function userDeposit(uint256 amount_) external beforeStaking nonReentrant {
+        require(metaFinanceClubInfo.userClub(_msgSender()) != address(0), "MFTP:E0");
         require(amount_ >= 10 ** 18, "MFTP:E1");
-        //address userClubAddress = metaFinanceClubInfo.userClub(_msgSender());
+
         cakeTokenAddress.safeTransferFrom(_msgSender(), address(this), amount_);
         takenTransfer(address(this), _msgSender(), amount_);
-        //        if (userClubAddress != exchequerAddress)
-        //            amount_.add((amount_.mul(metaFinanceClubInfo.clubIncentive())).div(proportion));
-        //metaFinanceIssuePoolAddress.stake(_msgSender(), amount_);
+        metaFinanceIssuePoolAddress.stake(_msgSender(), amount_);
 
         totalPledgeAmount = totalPledgeAmount.add(amount_);
         userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].add(amount_);
         metaFinanceClubInfo.calculateReward(metaFinanceClubInfo.userClub(_msgSender()), address(cakeTokenAddress), amount_, true);
-        //foundationData[userFoundation[_msgSender()]] = foundationData[userFoundation[_msgSender()]].add(amount_);
 
         emit UserPledgeCake(_msgSender(), address(cakeTokenAddress), amount_, block.timestamp);
     }
@@ -82,24 +79,18 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     */
     function userWithdraw(uint256 amount_) external beforeStaking nonReentrant {
         uint256 userPledgeAmount_ = userPledgeAmount[_msgSender()];
-        //address userClubAddress = metaFinanceClubInfo.userClub(_msgSender());
         require(amount_ >= 10 ** 18 && amount_ <= userPledgeAmount_, "MFTP:E2");
+
         totalPledgeAmount = totalPledgeAmount.sub(amount_);
         userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].sub(amount_);
         metaFinanceClubInfo.calculateReward(metaFinanceClubInfo.userClub(_msgSender()), address(cakeTokenAddress), amount_, false);
-        //foundationData[userFoundation[_msgSender()]] = foundationData[userFoundation[_msgSender()]].sub(amount_);
 
         cakeTokenAddress.safeTransfer(_msgSender(), amount_);
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount_);
-        //uint256 userReward = 0;
-        if (numberOfAwards > 0) //{
-        //(uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(_msgSender());
-        //userReward = userRewards;
+        if (numberOfAwards > 0)
             cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
-        //cakeTokenAddress.safeTransfer(exchequerAddress, exchequerRewards);
-        //}
         takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
-        //metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
+        metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
 
         emit UserWithdrawCake(_msgSender(), address(cakeTokenAddress), amount_, address(cakeTokenAddress), numberOfAwards, block.timestamp);
     }
@@ -111,9 +102,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
         require(numberOfAwards > 10 ** 10, "MFTP:E3");
 
-        //(uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(_msgSender());
         cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
-        //cakeTokenAddress.safeTransfer(exchequerAddress, exchequerRewards);
         takenTransfer(_msgSender(), address(this), numberOfAwards);
 
         emit UserReceiveCake(_msgSender(), address(cakeTokenAddress), numberOfAwards, block.timestamp);
@@ -123,15 +112,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @dev Anyone can update the pool
     */
     function renewPool() external beforeStaking {}
-
-    //    /**
-    //    * @dev User binding foundation
-    //    * @param foundationAddress_ Foundation address
-    //    */
-    //    function boundFoundation(address foundationAddress_) external {
-    //        //require(userFoundation[_msgSender()] == address(0) && foundationAddress_ != _msgSender(), "MFTP:E5");
-    //        //userFoundation[_msgSender()] = foundationAddress_;
-    //    }
 
     /**
     * @dev Query the user's current principal amount
@@ -233,15 +213,25 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @dev Modify the precision
     * @param newProportion_ New Club Fee Scale
     */
-    function setProportion(uint256 newProportion_) external onlyRole(DATA_ADMINISTRATOR) {
-        if (newProportion_ > proportion) {
-            uint256 difference = newProportion_.div(proportion);
-            proportion = newProportion_;
-            //clubIncentive = clubIncentive.mul(difference);
-            treasuryRatio = treasuryRatio.mul(difference);
-            uint256 length = smartChefArray.length;
-            for (uint256 i = 0; i < length; ++i) {
-                storageProportion[smartChefArray[i]] = storageProportion[smartChefArray[i]].mul(difference);
+    function setProportion(uint256 newProportion_) external beforeStaking onlyRole(DATA_ADMINISTRATOR) {
+        if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
+            if (newProportion_ > proportion) {
+                uint256 difference = newProportion_.div(proportion);
+                proportion = newProportion_;
+                treasuryRatio = treasuryRatio.mul(difference);
+                uint256 length = smartChefArray.length;
+                for (uint256 i = 0; i < length; ++i) {
+                    storageProportion[smartChefArray[i]] = storageProportion[smartChefArray[i]].mul(difference);
+                }
+            }
+            if (proportion > newProportion_) {
+                uint256 difference = proportion.div(newProportion_);
+                proportion = newProportion_;
+                treasuryRatio = treasuryRatio.div(difference);
+                uint256 length = smartChefArray.length;
+                for (uint256 i = 0; i < length; ++i) {
+                    storageProportion[smartChefArray[i]] = storageProportion[smartChefArray[i]].div(difference);
+                }
             }
         }
     }
@@ -250,13 +240,13 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @dev Modify the fee ratio
     * @param newTreasuryRatio_ New treasury fee ratio
     */
-    function setFeeRatio(uint256 newTreasuryRatio_) external onlyRole(DATA_ADMINISTRATOR) {
-        //if (newClubIncentive_ != 0) clubIncentive = newClubIncentive_;
+    function setFeeRatio(uint256 newTreasuryRatio_) external beforeStaking onlyRole(DATA_ADMINISTRATOR) {
         if (newTreasuryRatio_ != 0) treasuryRatio = newTreasuryRatio_;
     }
 
     /**
     * @dev Withdraw staked tokens without caring about rewards rewards
+    * @notice Use cautiously and exit with guaranteed principal!!!
     * @dev Needs to be for emergency.
     */
     function projectPartyEmergencyWithdraw() external onlyRole(PROJECT_ADMINISTRATOR) {
@@ -285,7 +275,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     /**
     * @dev claim Tokens
     */
-    function claimTokenToTreasury() external onlyRole(MONEY_ADMINISTRATOR) {
+    function claimTokenToTreasury() external beforeStaking onlyRole(MONEY_ADMINISTRATOR) {
         cakeTokenAddress.safeTransfer(exchequerAddress, exchequerAmount);
         exchequerAmount = 0;
     }

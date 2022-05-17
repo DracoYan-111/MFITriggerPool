@@ -9,6 +9,20 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
+/**
+ * @title MetaFinanceClubInfo contract interface
+ */
+interface IMetaFinanceClubInfo {
+    function userClub(address userAddress_) external view returns (address);
+
+    function treasuryAddress() external view returns (address);
+
+    function proportion() external view returns (uint256);
+
+    function yesClub() external view returns (uint256);
+
+    function noClub() external view returns (uint256);
+}
 
 contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     using SafeMath for uint256;
@@ -30,6 +44,7 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     uint256 public lockDays = 30;//180 days;
     IERC20Metadata public rewardsToken;
     uint256 public rewardPerTokenStored;
+    IMetaFinanceClubInfo public metaFinanceClubInfo;
 
     mapping(address => uint256) public rewards;
     mapping(address => uint256) private _balances;
@@ -42,9 +57,11 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     * @dev Constructor
     * @param _rewardsToken Reward Token Address
     */
-    constructor(address _rewardsToken){
+    constructor(address _rewardsToken, address metaFinanceClubInfo_){
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
+        metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
+
     }
 
     /* ========== VIEWS ========== */
@@ -86,7 +103,13 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     * @return Returns the revenue the user has already earned
     */
     function earned(address account_) public view returns (uint256) {
-        return _balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_]);
+        if (metaFinanceClubInfo.userClub(account_) == metaFinanceClubInfo.treasuryAddress())
+            return
+            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
+                (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.noClub()).div(metaFinanceClubInfo.proportion()));
+        return
+        (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
+            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.yesClub()).div(metaFinanceClubInfo.proportion()));
     }
 
     /**

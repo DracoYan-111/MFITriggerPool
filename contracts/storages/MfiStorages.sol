@@ -8,10 +8,9 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 contract MfiStorages {
-    uint256 public proportion = 100;
+
     uint256 public totalPledgeValue;
     uint256 public totalPledgeAmount;
-    //uint256 public clubIncentive = 10;
     uint256 public treasuryRatio = 50;
     uint256 public exchequerAmount;
     address public exchequerAddress;
@@ -20,10 +19,6 @@ contract MfiStorages {
     ISmartChefInitializable[] public smartChefArray;
     IMetaFinanceIssuePool public metaFinanceIssuePoolAddress;
 
-    // club data
-    //mapping(address => uint256) public foundationData;
-    // User Club Information
-    //mapping(address => address) public userFoundation;
     // User pledge amount
     mapping(address => uint256) public userPledgeAmount;
     // Storage quantity

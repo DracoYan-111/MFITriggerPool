@@ -5,14 +5,15 @@ import "./utils/MfiAccessControl.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract MetaFinanceClubInfo is MfiAccessControl {
-using SafeMath for uint256;
+    using SafeMath for uint256;
 
-    uint256 public yesClub;
-    uint256 public noClub;
+    uint256 public yesClub = 80;
+    uint256 public noClub = 85;
     address[] public userArray;
     address[] public clubArray;
     address public treasuryAddress;
     uint256 public clubIncentive = 10;
+
     // User Club Information
     mapping(address => address) public userClub;
     // club data
@@ -23,21 +24,19 @@ using SafeMath for uint256;
     )  {
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-
     }
 
-    event UserRegistration(address userAddress, address clubAddress);
     /**
     * @dev User binding club
     * @param clubAddress_ Club address
     */
-    function boundClub(address clubAddress_) external  {
-        require(userClub[_msgSender()] == address(0) && clubAddress_ != _msgSender(), "MFTP:E5");
+    function boundClub(address clubAddress_) external {
+        require(userClub[_msgSender()] == address(0) && clubAddress_ != _msgSender() && treasuryAddress != address(0), "MFTP:E5");
         userClub[_msgSender()] = clubAddress_;
         userArray.push(_msgSender());
         if (clubAddress_ != treasuryAddress)
             clubArray.push(clubAddress_);
-        emit UserRegistration(_msgSender(),clubAddress_);
+        emit UserRegistration(_msgSender(), clubAddress_);
     }
 
     /**
@@ -58,4 +57,37 @@ using SafeMath for uint256;
             foundationData[clubAddress_][tokenAddress_] = foundationData[clubAddress_][tokenAddress_].sub(amount_);
         }
     }
+
+    /**
+    * @dev Set proportion
+    * @param newProportion_ New proportion
+    */
+    function setProportion(uint256 newProportion_) external onlyRole(DATA_ADMINISTRATOR) {
+        if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
+            if (newProportion_ > proportion) {
+                uint256 difference = newProportion_.div(proportion);
+                proportion = newProportion_;
+                yesClub = yesClub.mul(difference);
+                noClub = noClub.mul(difference);
+            }
+            if (proportion > newProportion_) {
+                uint256 difference = proportion.div(newProportion_);
+                proportion = newProportion_;
+                yesClub = yesClub.div(difference);
+                noClub = noClub.div(difference);
+            }
+        }
+    }
+
+    /**
+    * @dev Set the club reward ratio
+    * @param newYesClub_ New yes Club
+    * @param newNoClub_ New no Club
+    */
+    function setClubProportion(uint256 newYesClub_, uint256 newNoClub_) external onlyRole(DATA_ADMINISTRATOR) {
+        if (newYesClub_ != 0) yesClub = newYesClub_;
+        if (newNoClub_ != 0) noClub = newNoClub_;
+    }
+
+    event UserRegistration(address userAddress, address clubAddress);
 }
