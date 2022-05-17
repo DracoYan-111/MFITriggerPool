@@ -145,6 +145,7 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
         userData_.lastTime = blockTimestamp;
         userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity.sub(generateQuantity));
         userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
+        emit UserHarvest(_msgSender(), reward);
     }
 
     /**
@@ -157,7 +158,7 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
         userData[_msgSender()].generateQuantity = 0;
         block.timestamp >= userData[_msgSender()].enderTime ?
         userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = userData[_msgSender()].pledgeTotal.sub(reward);
-        //rewardsToken.safeTransfer(_msgSender(), reward);
+        rewardsToken.safeTransfer(_msgSender(), reward);
         emit RewardPaid(_msgSender(), reward);
     }
 
@@ -194,4 +195,5 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 amount);
     event RewardPaid(address indexed user, uint256 reward);
+    event UserHarvest(address indexed user, uint256 reward);
 }
