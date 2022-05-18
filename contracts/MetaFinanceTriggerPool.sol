@@ -22,7 +22,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
 
     /* ========== CONSTRUCTOR ========== */
     constructor (
-        address exchequerAddress_,
+    //address exchequerAddress_,
         address metaFinanceClubInfo_,
         address metaFinanceIssuePoolAddress_
     )  {
@@ -32,7 +32,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         // _rTotal = (MAX - (MAX % _tTotal));
         // _taxFee = 100;
         // _previousTaxFee = 100;
-        exchequerAddress = exchequerAddress_;
+        //exchequerAddress = exchequerAddress_;
         _rOwned[address(this)] = _rTotal;
         _isExcluded[address(this)] = true;
         _isExcludedFromFee[address(this)] = true;
@@ -46,6 +46,15 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     // ==================== EXTERNAL ====================
+
+    /**
+    * @dev User binding club
+    * @param clubAddress_ Club address
+    */
+    function userBoundClub(address clubAddress_) external {
+        metaFinanceClubInfo.boundClub(clubAddress_);
+    }
+
     /**
     * @dev User pledge cake
     * @param amount_ User pledge amount
@@ -92,7 +101,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     */
     function userGetReward() external beforeStaking nonReentrant {
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
-        require(numberOfAwards > 10 ** 10, "MFTP:E3");
+        require(numberOfAwards > 0, "MFTP:E3");
 
         cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
         takenTransfer(_msgSender(), address(this), numberOfAwards);
@@ -274,7 +283,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @dev claim Tokens
     */
     function claimTokenToTreasury() external beforeStaking onlyRole(MONEY_ADMINISTRATOR) {
-        cakeTokenAddress.safeTransfer(exchequerAddress, exchequerAmount);
+        cakeTokenAddress.safeTransfer(metaFinanceClubInfo.treasuryAddress(), exchequerAmount);
         exchequerAmount = 0;
     }
 
@@ -290,7 +299,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     ) external onlyRole(MONEY_ADMINISTRATOR) {
         if (amount > 0) {
             if (token == address(0)) {
-                payable(to).transfer(amount);
+                //payable(to).transfer(amount);
+                //require(payable(to).send(amount),"MFTP:E6");
+                (bool res,) = to.call{value : amount}("");
+                require(res, "MFTP:E6");
             } else {
                 IERC20Metadata(token).safeTransfer(to, amount);
             }

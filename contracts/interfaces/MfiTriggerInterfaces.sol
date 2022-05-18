@@ -194,6 +194,12 @@ interface IMetaFinanceClubInfo {
     * @return Back to Club Reward Scale
     */
     function clubIncentive() external view returns (uint256);
+
+    /**
+    * @dev Query treasury address
+    * @return Return to Treasury Address
+    */
+    function treasuryAddress() external view returns (address);
 }
 
 /**

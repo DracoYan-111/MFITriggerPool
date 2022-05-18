@@ -4,7 +4,7 @@ pragma solidity 0.8.6;
 import "./utils/MfiAccessControl.sol";
 import "./storages/MfiClubStorages.sol";
 
-contract MetaFinanceClubInfo is MfiAccessControl,MfiClubStorages {
+contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages {
     using SafeMath for uint256;
 
     /* ========== EVENT ========== */
@@ -21,7 +21,7 @@ contract MetaFinanceClubInfo is MfiAccessControl,MfiClubStorages {
     * @dev User binding club
     * @param clubAddress_ Club address
     */
-    function boundClub(address clubAddress_) external {
+    function boundClub(address clubAddress_) external onlyRole(META_FINANCE_TRIGGER_POOL) {
         require(userClub[_msgSender()] == address(0) && clubAddress_ != _msgSender() && treasuryAddress != address(0), "MFCI:E1");
         userClub[_msgSender()] = clubAddress_;
         userArray.push(_msgSender());

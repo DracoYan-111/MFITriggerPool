@@ -16,7 +16,7 @@ contract MfiStorages {
     uint256 public totalPledgeAmount;
     uint256 public treasuryRatio = 50;
     uint256 public exchequerAmount;
-    address public exchequerAddress;
+    //address public exchequerAddress;
     uint256 public cakeTokenBalanceOf;
     IMetaFinanceClubInfo public metaFinanceClubInfo;
     ISmartChefInitializable[] public smartChefArray;

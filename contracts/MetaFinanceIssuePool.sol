@@ -5,7 +5,7 @@ import "./events/MfiIssueEvents.sol";
 import "./utils/MfiAccessControl.sol";
 import "./storages/MfiIssueStorages.sol";
 
-contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,ReentrancyGuard, MfiAccessControl {
+contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, ReentrancyGuard, MfiAccessControl {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
@@ -14,7 +14,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
         metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
-
     }
 
     /* ========== EXTERNAL ========== */
@@ -74,7 +73,8 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
         userData[_msgSender()].generateQuantity = 0;
         block.timestamp >= userData[_msgSender()].enderTime ?
         userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = userData[_msgSender()].pledgeTotal.sub(reward);
-        rewardsToken.safeTransfer(_msgSender(), reward);
+        received[_msgSender()] = received[_msgSender()].add(reward);
+        //rewardsToken.safeTransfer(_msgSender(), reward);
         emit RewardPaid(_msgSender(), reward);
     }
 
@@ -99,13 +99,10 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
     * @return Returns the revenue the user has already earned
     */
     function earned(address account_) public view returns (uint256) {
+        uint256 userEarned = (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_]));
         if (metaFinanceClubInfo.userClub(account_) == metaFinanceClubInfo.treasuryAddress())
-            return
-            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
-                (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.noClub()).div(metaFinanceClubInfo.proportion()));
-        return
-        (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
-            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.yesClub()).div(metaFinanceClubInfo.proportion()));
+            return userEarned.mul(metaFinanceClubInfo.noClub()).div(metaFinanceClubInfo.proportion());
+        return userEarned.mul(metaFinanceClubInfo.yesClub()).div(metaFinanceClubInfo.proportion());
     }
 
     /**

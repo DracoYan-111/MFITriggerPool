@@ -1,0 +1,561 @@
+{
+  "contractName": "MfiIssueEvents",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_reward",
+          "type": "uint256"
+        }
+      ],
+      "name": "RewardAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_reward",
+          "type": "uint256"
+        }
+      ],
+      "name": "RewardPaid",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Staked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_reward",
+          "type": "uint256"
+        }
+      ],
+      "name": "UserHarvest",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Withdrawn",
+      "type": "event"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_reward\",\"type\":\"uint256\"}],\"name\":\"RewardAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_reward\",\"type\":\"uint256\"}],\"name\":\"RewardPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_reward\",\"type\":\"uint256\"}],\"name\":\"UserHarvest\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"Withdrawn\",\"type\":\"event\"}],\"devdoc\":{\"events\":{\"RewardAdded(uint256)\":{\"details\":\"Reward update event\",\"params\":{\"_reward\":\"Reward amount\"}},\"RewardPaid(address,uint256)\":{\"details\":\"User receive reward event\",\"params\":{\"_reward\":\"User receive amount\",\"_user\":\"User address\"}},\"Staked(address,uint256)\":{\"details\":\"User staked event\",\"params\":{\"_amount\":\"User staked amount\",\"_user\":\"User address\"}},\"UserHarvest(address,uint256)\":{\"details\":\"User harvest event\",\"params\":{\"_reward\":\"User harvest amount\",\"_user\":\"User address\"}},\"Withdrawn(address,uint256)\":{\"details\":\"User withdrawn event\",\"params\":{\"_amount\":\"User withdrawn amount\",\"_user\":\"User address\"}}},\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/events/MfiIssueEvents.sol\":\"MfiIssueEvents\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/events/MfiIssueEvents.sol\":{\"keccak256\":\"0x07774057f534f175b3ff573a076abbdf1662fee41099621ee18be12287cfee7f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9b74656b199f9da418848c2ce1c37478ac194e2c8f4c8d63d890d20f470d672c\",\"dweb:/ipfs/Qmec9Ls63HqbQj1qppVGSvzUXw8JYsPCwERDBwq1hFLBRj\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212201941b767219a7c451e58a6deb2f1e1a2e56707ad9bec78e9515560880c4484c464736f6c63430008060033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212201941b767219a7c451e58a6deb2f1e1a2e56707ad9bec78e9515560880c4484c464736f6c63430008060033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "56:878:163:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "56:878:163:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.6;\n\ncontract MfiIssueEvents {\n    /**\n    * @dev Reward update event\n    * @param _reward Reward amount\n    */\n    event RewardAdded(uint256 _reward);\n\n    /**\n    * @dev User staked event\n    * @param _user User address\n    * @param _amount User staked amount\n    */\n    event Staked(address indexed _user, uint256 _amount);\n\n    /**\n    * @dev User withdrawn event\n    * @param _user User address\n    * @param _amount User withdrawn amount\n    */\n    event Withdrawn(address indexed _user, uint256 _amount);\n\n    /**\n    * @dev User harvest event\n    * @param _user User address\n    * @param _reward User harvest amount\n    */\n    event UserHarvest(address indexed _user, uint256 _reward);\n\n    /**\n    * @dev User receive reward event\n    * @param _user User address\n    * @param _reward User receive amount\n    */\n    event RewardPaid(address indexed _user, uint256 _reward);\n\n}\n",
+  "sourcePath": "/Users/blockinsight/Desktop/myCode/solidity/MFITriggerPool/contracts/events/MfiIssueEvents.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/events/MfiIssueEvents.sol",
+    "exportedSymbols": {
+      "MfiIssueEvents": [
+        7653
+      ]
+    },
+    "id": 7654,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 7619,
+        "literals": [
+          "solidity",
+          "0.8",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:22:163"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 7653,
+        "linearizedBaseContracts": [
+          7653
+        ],
+        "name": "MfiIssueEvents",
+        "nameLocation": "65:14:163",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": {
+              "id": 7620,
+              "nodeType": "StructuredDocumentation",
+              "src": "86:76:163",
+              "text": " @dev Reward update event\n @param _reward Reward amount"
+            },
+            "id": 7624,
+            "name": "RewardAdded",
+            "nameLocation": "173:11:163",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 7623,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7622,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_reward",
+                  "nameLocation": "193:7:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7624,
+                  "src": "185:15:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7621,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "185:7:163",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "184:17:163"
+            },
+            "src": "167:35:163"
+          },
+          {
+            "anonymous": false,
+            "documentation": {
+              "id": 7625,
+              "nodeType": "StructuredDocumentation",
+              "src": "208:111:163",
+              "text": " @dev User staked event\n @param _user User address\n @param _amount User staked amount"
+            },
+            "id": 7631,
+            "name": "Staked",
+            "nameLocation": "330:6:163",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 7630,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7627,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "_user",
+                  "nameLocation": "353:5:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7631,
+                  "src": "337:21:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7626,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "337:7:163",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7629,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_amount",
+                  "nameLocation": "368:7:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7631,
+                  "src": "360:15:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7628,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "360:7:163",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "336:40:163"
+            },
+            "src": "324:53:163"
+          },
+          {
+            "anonymous": false,
+            "documentation": {
+              "id": 7632,
+              "nodeType": "StructuredDocumentation",
+              "src": "383:117:163",
+              "text": " @dev User withdrawn event\n @param _user User address\n @param _amount User withdrawn amount"
+            },
+            "id": 7638,
+            "name": "Withdrawn",
+            "nameLocation": "511:9:163",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 7637,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7634,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "_user",
+                  "nameLocation": "537:5:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7638,
+                  "src": "521:21:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7633,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "521:7:163",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7636,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_amount",
+                  "nameLocation": "552:7:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7638,
+                  "src": "544:15:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7635,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "544:7:163",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "520:40:163"
+            },
+            "src": "505:56:163"
+          },
+          {
+            "anonymous": false,
+            "documentation": {
+              "id": 7639,
+              "nodeType": "StructuredDocumentation",
+              "src": "567:113:163",
+              "text": " @dev User harvest event\n @param _user User address\n @param _reward User harvest amount"
+            },
+            "id": 7645,
+            "name": "UserHarvest",
+            "nameLocation": "691:11:163",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 7644,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7641,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "_user",
+                  "nameLocation": "719:5:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7645,
+                  "src": "703:21:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7640,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "703:7:163",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7643,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_reward",
+                  "nameLocation": "734:7:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7645,
+                  "src": "726:15:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7642,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "726:7:163",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "702:40:163"
+            },
+            "src": "685:58:163"
+          },
+          {
+            "anonymous": false,
+            "documentation": {
+              "id": 7646,
+              "nodeType": "StructuredDocumentation",
+              "src": "749:120:163",
+              "text": " @dev User receive reward event\n @param _user User address\n @param _reward User receive amount"
+            },
+            "id": 7652,
+            "name": "RewardPaid",
+            "nameLocation": "880:10:163",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 7651,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 7648,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "_user",
+                  "nameLocation": "907:5:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7652,
+                  "src": "891:21:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 7647,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "891:7:163",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7650,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "_reward",
+                  "nameLocation": "922:7:163",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 7652,
+                  "src": "914:15:163",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 7649,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "914:7:163",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "890:40:163"
+            },
+            "src": "874:57:163"
+          }
+        ],
+        "scope": 7654,
+        "src": "56:878:163",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:903:163"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.6+commit.11564f7e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.7",
+  "updatedAt": "2022-05-18T06:06:15.600Z",
+  "devdoc": {
+    "events": {
+      "RewardAdded(uint256)": {
+        "details": "Reward update event",
+        "params": {
+          "_reward": "Reward amount"
+        }
+      },
+      "RewardPaid(address,uint256)": {
+        "details": "User receive reward event",
+        "params": {
+          "_reward": "User receive amount",
+          "_user": "User address"
+        }
+      },
+      "Staked(address,uint256)": {
+        "details": "User staked event",
+        "params": {
+          "_amount": "User staked amount",
+          "_user": "User address"
+        }
+      },
+      "UserHarvest(address,uint256)": {
+        "details": "User harvest event",
+        "params": {
+          "_reward": "User harvest amount",
+          "_user": "User address"
+        }
+      },
+      "Withdrawn(address,uint256)": {
+        "details": "User withdrawn event",
+        "params": {
+          "_amount": "User withdrawn amount",
+          "_user": "User address"
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

@@ -30,6 +30,7 @@ contract MfiIssueStorages {
     uint256 public rewardPerTokenStored;
     IMetaFinanceClubInfo public metaFinanceClubInfo;
 
+    mapping(address => uint256) public received;
     mapping(address => uint256) public rewards;
     mapping(address => uint256) public _balances;
     mapping(address => UserPledge) public userData;
