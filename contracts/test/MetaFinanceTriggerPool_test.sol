@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "../events/MfiEvents.sol";
-import "../storages/MfiStorages.sol";
+import "../events/MfiTriggerEvents.sol";
+import "../storages/MfiTriggerStorages.sol";
 import "../utils/MfiAccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";

@@ -2,56 +2,6 @@
 pragma solidity ^0.8.6;
 
 /**
- * @title IPancakeProfile contract interface
- */
-/*
-interface IPancakeProfile {
-    function createProfile(
-        uint256 _teamId,
-        address _nftAddress,
-        uint256 _tokenId
-    ) external;
-
-    function increaseUserPoints(
-        address _userAddress,
-        uint256 _numberPoints,
-        uint256 _campaignId
-    ) external;
-
-    function removeUserPoints(address _userAddress, uint256 _numberPoints) external;
-
-    function addNftAddress(address _nftAddress) external;
-
-    function addTeam(string calldata _teamName, string calldata _teamDescription) external;
-
-    function getUserProfile(address _userAddress)
-    external
-    view
-    returns (
-        uint256,
-        uint256,
-        uint256,
-        address,
-        uint256,
-        bool
-    );
-
-    function getUserStatus(address _userAddress) external view returns (bool);
-
-    function getTeamProfile(uint256 _teamId)
-    external
-    view
-    returns (
-        string memory,
-        string memory,
-        uint256,
-        uint256,
-        bool
-    );
-}
-*/
-
-/**
  * @title PancakeRouter01 contract interface
  */
 interface IPancakeRouter01 {
@@ -214,6 +164,39 @@ interface IPancakeRouter01 {
 }
 
 /**
+ * @title MetaFinanceClubInfo contract interface
+ */
+interface IMetaFinanceClubInfo {
+    /**
+    * @dev User binding club
+    * @param clubAddress_ Club address
+    */
+    function boundClub(address clubAddress_) external;
+
+    /**
+    * @dev Calculate the number of club rewards
+    * @param clubAddress_ Club address
+    * @param tokenAddress_ Club token address
+    * @param amount_ Number of operations
+    * @param addOrSub_ Add or sub
+    */
+    function calculateReward(address clubAddress_, address tokenAddress_, uint256 amount_, bool addOrSub_) external;
+
+    /**
+    * @dev Query user club address
+    * @param userAddress_ User address
+    * @return Return to club address
+    */
+    function userClub(address userAddress_) external view returns (address);
+
+    /**
+    * @dev Get Club Rewards
+    * @return Back to Club Reward Scale
+    */
+    function clubIncentive() external view returns (uint256);
+}
+
+/**
  * @title MetaFinanceIssuePool contract interface
  */
 interface IMetaFinanceIssuePool {
@@ -322,15 +305,4 @@ interface IPancakeRouter02 is IPancakeRouter01 {
     ) external;
 }
 
-/**
- * @title MetaFinanceClubInfo contract interface
- */
-interface IMetaFinanceClubInfo {
-    function boundClub(address clubAddress_) external;
 
-    function calculateReward(address clubAddress_, address tokenAddress_, uint256 amount_, bool addOrSub_) external;
-
-    function userClub(address userAddress_) external view returns (address);
-
-    function clubIncentive() external view returns (uint256);
-}

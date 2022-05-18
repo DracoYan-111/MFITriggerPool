@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.6;
 
-import "../storages/MfiStorages.sol";
+import "../storages/MfiTriggerStorages.sol";
 
 
 contract smartChefInitializable {

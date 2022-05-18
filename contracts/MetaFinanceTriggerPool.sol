@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "./events/MfiEvents.sol";
-import "./storages/MfiStorages.sol";
 import "./utils/MfiAccessControl.sol";
+import "./events/MfiTriggerEvents.sol";
+import "./storages/MfiTriggerStorages.sol";
+
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -47,6 +48,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
 
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _tOwned[address(this)] = tokenFromReflection(_rOwned[address(this)]);
+
         metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
         metaFinanceIssuePoolAddress = IMetaFinanceIssuePool(metaFinanceIssuePoolAddress_);
 
@@ -128,7 +130,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param oldRewardBalanceOf Account address
     * @return User rewards, Treasury rewards
     */
-    function totalUserRewards(uint256 oldRewardBalanceOf) public view returns (uint256, uint256) {
+    function totalUserRewards(uint256 oldRewardBalanceOf) private view returns (uint256, uint256) {
         uint256 userRewardBalanceOf = oldRewardBalanceOf.mul(treasuryRatio).div(proportion);
         return (userRewardBalanceOf, (oldRewardBalanceOf.sub(userRewardBalanceOf)));
     }
@@ -140,7 +142,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     *         and increase the rewards for all users
     */
     function updateMiningPool() private {
-        if (totalPledgeAmount != 0) {
+        if (totalPledgeValue != 0) {
             cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
             uint256 length = smartChefArray.length;
             for (uint256 i = 0; i < length; ++i) {
@@ -151,9 +153,16 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
                 path[1] = address(cakeTokenAddress);
                 swapTokensForCake(IERC20Metadata(path[0]), path, rewardTokenBalanceOf);
             }
-            (uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(((cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue)).sub(cakeTokenBalanceOf));
-            exchequerAmount = exchequerAmount.add(exchequerRewards);
-            takenTransfer(address(this), address(this), userRewards);
+
+            uint256 haveAward = ((cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue)).sub(cakeTokenBalanceOf);
+
+            if (totalPledgeAmount != 0) {
+                (uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(haveAward);
+                exchequerAmount = exchequerAmount.add(exchequerRewards);
+                takenTransfer(address(this), address(this), userRewards);
+            } else {
+                exchequerAmount = exchequerAmount.add(haveAward);
+            }
         }
     }
 

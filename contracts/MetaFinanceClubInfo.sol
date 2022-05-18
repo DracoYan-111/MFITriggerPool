@@ -2,26 +2,14 @@
 pragma solidity ^0.8.6;
 
 import "./utils/MfiAccessControl.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./storages/MfiClubStorages.sol";
 
-contract MetaFinanceClubInfo is MfiAccessControl {
+contract MetaFinanceClubInfo is MfiAccessControl,MfiClubStorages {
     using SafeMath for uint256;
 
-    uint256 public yesClub = 80;
-    uint256 public noClub = 85;
-    address[] public userArray;
-    address[] public clubArray;
-    address public treasuryAddress;
-    uint256 public clubIncentive = 10;
+    event UserRegistration(address userAddress, address clubAddress);
 
-    // User Club Information
-    mapping(address => address) public userClub;
-    // club data
-    mapping(address => mapping(address => uint256)) public foundationData;
-
-    constructor (
-        address treasuryAddress_
-    )  {
+    constructor (address treasuryAddress_)  {
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
@@ -31,7 +19,7 @@ contract MetaFinanceClubInfo is MfiAccessControl {
     * @param clubAddress_ Club address
     */
     function boundClub(address clubAddress_) external {
-        require(userClub[_msgSender()] == address(0) && clubAddress_ != _msgSender() && treasuryAddress != address(0), "MFTP:E5");
+        require(userClub[_msgSender()] == address(0) && clubAddress_ != _msgSender() && treasuryAddress != address(0), "MFCI:E1");
         userClub[_msgSender()] = clubAddress_;
         userArray.push(_msgSender());
         if (clubAddress_ != treasuryAddress)
@@ -89,5 +77,5 @@ contract MetaFinanceClubInfo is MfiAccessControl {
         if (newNoClub_ != 0) noClub = newNoClub_;
     }
 
-    event UserRegistration(address userAddress, address clubAddress);
+
 }

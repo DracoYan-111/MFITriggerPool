@@ -1,62 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
+import "./events/MfiIssueEvents.sol";
 import "./utils/MfiAccessControl.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "./storages/MfiIssueStorages.sol";
 
-/**
- * @title MetaFinanceClubInfo contract interface
- */
-interface IMetaFinanceClubInfo {
-    function userClub(address userAddress_) external view returns (address);
-
-    function treasuryAddress() external view returns (address);
-
-    function proportion() external view returns (uint256);
-
-    function yesClub() external view returns (uint256);
-
-    function noClub() external view returns (uint256);
-}
-
-contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
+contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,ReentrancyGuard, MfiAccessControl {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
-    /* ========== STATE VARIABLES ========== */
-    struct UserPledge {
-        uint256 pledgeTotal;
-        uint256 startTime;
-        uint256 enderTime;
-        uint256 lastTime;
-        uint256 generateQuantity;
-        uint256 numberOfRewardsPerSecond;
-    }
 
-    uint256 private _totalSupply;
-    uint256 public rewardRate = 0;
-    uint256 public lastUpdateTime;
-    uint256 public lockDays = 30;//180 days;
-    IERC20Metadata public rewardsToken;
-    uint256 public rewardPerTokenStored;
-    IMetaFinanceClubInfo public metaFinanceClubInfo;
 
-    mapping(address => uint256) public rewards;
-    mapping(address => uint256) private _balances;
-    mapping(address => UserPledge) public userData;
-    mapping(address => uint256) public userRewardPerTokenPaid;
 
     /* ========== CONSTRUCTOR ========== */
 
-    /**
-    * @dev Constructor
-    * @param _rewardsToken Reward Token Address
-    */
     constructor(address _rewardsToken, address metaFinanceClubInfo_){
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
@@ -65,23 +22,6 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
     }
 
     /* ========== VIEWS ========== */
-
-    /**
-    * @dev Total pledge amount
-    * @return Returns the total pledge amount
-    */
-    function totalSupply() external view returns (uint256) {
-        return _totalSupply;
-    }
-
-    /**
-    * @dev User pledge amount
-    * @param account_ User address
-    * @return Returns the users pledge amount
-    */
-    function balanceOf(address account_) external view returns (uint256) {
-        return _balances[account_];
-    }
 
     /**
     * @dev Rewards per token
@@ -211,12 +151,4 @@ contract MetaFinanceIssuePool is Context, ReentrancyGuard, MfiAccessControl {
         }
         _;
     }
-
-    /* ========== EVENTS ========== */
-
-    event RewardAdded(uint256 reward);
-    event Staked(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
-    event RewardPaid(address indexed user, uint256 reward);
-    event UserHarvest(address indexed user, uint256 reward);
 }

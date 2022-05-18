@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 
 abstract contract MfiAccessControl is AccessControl {
+
     uint256 public proportion = 100;
 
     uint256 public constant MAX = ~uint256(0);
