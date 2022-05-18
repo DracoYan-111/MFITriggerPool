@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 contract MfiIssueStorages {
+
     /* ========== STATE VARIABLES ========== */
     struct UserPledge {
         uint256 pledgeTotal;

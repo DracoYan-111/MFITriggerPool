@@ -17,47 +17,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
 
     }
 
-    /* ========== VIEWS ========== */
-    /**
-    * @dev Rewards per token
-    * @return Returns the reward amount for staked tokens
-    */
-    function rewardPerToken() public view returns (uint256) {
-        if (_totalSupply == 0) {
-            return rewardPerTokenStored;
-        }
-        return
-        rewardPerTokenStored.add(
-            block.timestamp.sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply)
-        );
-    }
-
-    /**
-    * @dev View user revenue
-    * @param account_ User address
-    * @return Returns the revenue the user has already earned
-    */
-    function earned(address account_) public view returns (uint256) {
-        if (metaFinanceClubInfo.userClub(account_) == metaFinanceClubInfo.treasuryAddress())
-            return
-            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
-                (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.noClub()).div(metaFinanceClubInfo.proportion()));
-        return
-        (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
-            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.yesClub()).div(metaFinanceClubInfo.proportion()));
-    }
-
-    /**
-    * @dev Rewards that users can already claim
-    * @param account_ User address
-    * @return Returns the reward that the user has moderated
-    */
-    function userAward(address account_) public view returns (uint256){
-        UserPledge memory userData_ = userData[account_];
-        if (userData_.startTime == 0) return 0;
-        return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
-    }
-
     /* ========== EXTERNAL ========== */
     /**
     * @dev User pledge
@@ -117,6 +76,47 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
         userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = userData[_msgSender()].pledgeTotal.sub(reward);
         rewardsToken.safeTransfer(_msgSender(), reward);
         emit RewardPaid(_msgSender(), reward);
+    }
+
+    /* ========== VIEWS ========== */
+    /**
+    * @dev Rewards per token
+    * @return Returns the reward amount for staked tokens
+    */
+    function rewardPerToken() public view returns (uint256) {
+        if (_totalSupply == 0) {
+            return rewardPerTokenStored;
+        }
+        return
+        rewardPerTokenStored.add(
+            block.timestamp.sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply)
+        );
+    }
+
+    /**
+    * @dev View user revenue
+    * @param account_ User address
+    * @return Returns the revenue the user has already earned
+    */
+    function earned(address account_) public view returns (uint256) {
+        if (metaFinanceClubInfo.userClub(account_) == metaFinanceClubInfo.treasuryAddress())
+            return
+            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
+                (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.noClub()).div(metaFinanceClubInfo.proportion()));
+        return
+        (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).add(
+            (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_])).mul(metaFinanceClubInfo.yesClub()).div(metaFinanceClubInfo.proportion()));
+    }
+
+    /**
+    * @dev Rewards that users can already claim
+    * @param account_ User address
+    * @return Returns the reward that the user has moderated
+    */
+    function userAward(address account_) public view returns (uint256){
+        UserPledge memory userData_ = userData[account_];
+        if (userData_.startTime == 0) return 0;
+        return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

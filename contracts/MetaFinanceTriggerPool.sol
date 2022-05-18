@@ -5,9 +5,6 @@ import "./utils/MfiAccessControl.sol";
 import "./events/MfiTriggerEvents.sol";
 import "./storages/MfiTriggerStorages.sol";
 
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
 contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pausable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
