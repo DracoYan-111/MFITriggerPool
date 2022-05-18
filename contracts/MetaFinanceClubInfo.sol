@@ -7,13 +7,16 @@ import "./storages/MfiClubStorages.sol";
 contract MetaFinanceClubInfo is MfiAccessControl,MfiClubStorages {
     using SafeMath for uint256;
 
+    /* ========== EVENT ========== */
     event UserRegistration(address userAddress, address clubAddress);
 
+    /* ========== CONSTRUCTOR ========== */
     constructor (address treasuryAddress_)  {
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
+    /* ========== EXTERNAL ========== */
     /**
     * @dev User binding club
     * @param clubAddress_ Club address

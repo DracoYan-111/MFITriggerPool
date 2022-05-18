@@ -13,7 +13,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     using SafeERC20 for IERC20Metadata;
 
     // ==================== PRIVATE ====================
-
     uint256 private  _taxFee = 100;
     uint256 private  _tTotal = 10 ** 50;
     uint256 private  _previousTaxFee = 100;
@@ -23,13 +22,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
     mapping(address => bool) private _isExcludedFromFee;
 
-    // ==================== MODIFIER ====================
-    modifier beforeStaking(){
-        updateMiningPool();
-        _;
-        reinvest();
-    }
 
+    /* ========== CONSTRUCTOR ========== */
     constructor (
         address exchequerAddress_,
         address metaFinanceClubInfo_,
@@ -55,7 +49,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     // ==================== EXTERNAL ====================
-
     /**
     * @dev User pledge cake
     * @param amount_ User pledge amount
@@ -217,7 +210,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     }
 
     // ==================== ONLYROLE ====================
-
     /**
     * @dev Modify the precision
     * @param newProportion_ New Club Fee Scale
@@ -306,6 +298,13 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
                 IERC20Metadata(token).safeTransfer(to, amount);
             }
         }
+    }
+
+    // ==================== MODIFIER ====================
+    modifier beforeStaking(){
+        updateMiningPool();
+        _;
+        reinvest();
     }
 
     // ==================== INTERNAL ====================

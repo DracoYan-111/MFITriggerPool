@@ -9,11 +9,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
-
-
-
     /* ========== CONSTRUCTOR ========== */
-
     constructor(address _rewardsToken, address metaFinanceClubInfo_){
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
@@ -22,7 +18,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
     }
 
     /* ========== VIEWS ========== */
-
     /**
     * @dev Rewards per token
     * @return Returns the reward amount for staked tokens
@@ -64,7 +59,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages,MfiIssueEvents,Reentr
     }
 
     /* ========== EXTERNAL ========== */
-
     /**
     * @dev User pledge
     * @notice nonReentrant,updateReward(user address),onlyRole(META_FINANCE_TRIGGER_POOL)
