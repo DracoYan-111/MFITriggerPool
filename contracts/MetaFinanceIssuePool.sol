@@ -88,7 +88,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         block.timestamp >= userData[_msgSender()].enderTime ?
         userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = userData[_msgSender()].pledgeTotal.sub(reward);
         received[_msgSender()] = received[_msgSender()].add(reward);
-        //rewardsToken.safeTransfer(_msgSender(), reward);
+        rewardsToken.safeTransfer(_msgSender(), reward);
         emit RewardPaid(_msgSender(), reward);
     }
 

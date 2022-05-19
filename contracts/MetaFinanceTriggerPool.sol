@@ -167,15 +167,16 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     *         and increase the rewards for all users
     */
     function updateMiningPool() private {
+        cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
         if (totalPledgeValue != 0) {
-            cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
             uint256 length = smartChefArray.length;
             for (uint256 i = 0; i < length; ++i) {
                 uint256 rewardTokenBalanceOf = IERC20Metadata(smartChefArray[i].rewardToken()).balanceOf(address(this));
                 smartChefArray[i].withdraw(storageQuantity[smartChefArray[i]]);
-                address[] memory path = new address[](2);
+                address[] memory path = new address[](3);
                 path[0] = smartChefArray[i].rewardToken();
-                path[1] = address(cakeTokenAddress);
+                path[1] = address(wbnbTokenAddress);
+                path[2] = address(cakeTokenAddress);
                 swapTokensForCake(IERC20Metadata(path[0]), path, rewardTokenBalanceOf);
             }
 
@@ -234,10 +235,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
         // address(uniswapV2Pair) cake -> address(this)
         pancakeRouterAddress.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             tokenAmount,
-            0, // accept any amount of cake
+            1, // accept any amount of cake
             path,
             address(this),
-            block.timestamp + 10
+            block.timestamp + 60
         );
     }
 
