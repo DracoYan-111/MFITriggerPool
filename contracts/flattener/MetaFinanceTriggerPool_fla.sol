@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev External interface of AccessControl declared to support ERC165 detection.
@@ -91,10 +91,10 @@ interface IAccessControl {
 
 // File: @openzeppelin/contracts/utils/Context.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -118,10 +118,10 @@ abstract contract Context {
 
 // File: @openzeppelin/contracts/utils/Strings.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/Strings.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev String operations.
@@ -188,10 +188,10 @@ library Strings {
 
 // File: @openzeppelin/contracts/utils/introspection/IERC165.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Interface of the ERC165 standard, as defined in the
@@ -216,10 +216,10 @@ interface IERC165 {
 
 // File: @openzeppelin/contracts/utils/introspection/ERC165.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Implementation of the {IERC165} interface.
@@ -246,10 +246,10 @@ abstract contract ERC165 is IERC165 {
 
 // File: @openzeppelin/contracts/access/AccessControl.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (access/AccessControl.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 
 
@@ -341,14 +341,14 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
     function _checkRole(bytes32 role, address account) internal view virtual {
         if (!hasRole(role, account)) {
             revert(
-                string(
-                    abi.encodePacked(
-                        "AccessControl: account ",
-                        Strings.toHexString(uint160(account), 20),
-                        " is missing role ",
-                        Strings.toHexString(uint256(role), 32)
-                    )
+            string(
+                abi.encodePacked(
+                    "AccessControl: account ",
+                    Strings.toHexString(uint160(account), 20),
+                    " is missing role ",
+                    Strings.toHexString(uint256(role), 32)
                 )
+            )
             );
         }
     }
@@ -470,8 +470,8 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
 
 // File: contracts/utils/MfiAccessControl.sol
 
- 
-pragma solidity ^0.8.6;
+
+pragma solidity 0.8.13;
 
 abstract contract MfiAccessControl is AccessControl {
 
@@ -496,8 +496,8 @@ abstract contract MfiAccessControl is AccessControl {
 
 // File: contracts/events/MfiTriggerEvents.sol
 
- 
- pragma solidity 0.8.13;
+
+pragma solidity 0.8.13;
 
 contract MfiEvents {
     /*
@@ -533,8 +533,8 @@ contract MfiEvents {
 
 // File: contracts/interfaces/MfiTriggerInterfaces.sol
 
- 
- pragma solidity 0.8.13;
+
+pragma solidity 0.8.13;
 
 /**
  * @title PancakeRouter01 contract interface
@@ -704,9 +704,10 @@ interface IPancakeRouter01 {
 interface IMetaFinanceClubInfo {
     /**
     * @dev User binding club
+    * @param userAddress_ User address
     * @param clubAddress_ Club address
     */
-    function boundClub(address clubAddress_) external;
+    function boundClub(address userAddress_, address clubAddress_) external;
 
     /**
     * @dev Calculate the number of club rewards
@@ -848,10 +849,10 @@ interface IPancakeRouter02 is IPancakeRouter01 {
 
 // File: @openzeppelin/contracts/utils/math/Math.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/math/Math.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Standard math utilities missing in the Solidity language.
@@ -892,104 +893,12 @@ library Math {
     }
 }
 
-// File: @openzeppelin/contracts/security/Pausable.sol
-
- 
-// OpenZeppelin Contracts v4.4.1 (security/Pausable.sol)
-
- pragma solidity 0.8.13;
-
-/**
- * @dev Contract module which allows children to implement an emergency stop
- * mechanism that can be triggered by an authorized account.
- *
- * This module is used through inheritance. It will make available the
- * modifiers `whenNotPaused` and `whenPaused`, which can be applied to
- * the functions of your contract. Note that they will not be pausable by
- * simply including this module, only once the modifiers are put in place.
- */
-abstract contract Pausable is Context {
-    /**
-     * @dev Emitted when the pause is triggered by `account`.
-     */
-    event Paused(address account);
-
-    /**
-     * @dev Emitted when the pause is lifted by `account`.
-     */
-    event Unpaused(address account);
-
-    bool private _paused;
-
-    /**
-     * @dev Initializes the contract in unpaused state.
-     */
-    constructor() {
-        _paused = false;
-    }
-
-    /**
-     * @dev Returns true if the contract is paused, and false otherwise.
-     */
-    function paused() public view virtual returns (bool) {
-        return _paused;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the contract is not paused.
-     *
-     * Requirements:
-     *
-     * - The contract must not be paused.
-     */
-    modifier whenNotPaused() {
-        require(!paused(), "Pausable: paused");
-        _;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the contract is paused.
-     *
-     * Requirements:
-     *
-     * - The contract must be paused.
-     */
-    modifier whenPaused() {
-        require(paused(), "Pausable: not paused");
-        _;
-    }
-
-    /**
-     * @dev Triggers stopped state.
-     *
-     * Requirements:
-     *
-     * - The contract must not be paused.
-     */
-    function _pause() internal virtual whenNotPaused {
-        _paused = true;
-        emit Paused(_msgSender());
-    }
-
-    /**
-     * @dev Returns to normal state.
-     *
-     * Requirements:
-     *
-     * - The contract must be paused.
-     */
-    function _unpause() internal virtual whenPaused {
-        _paused = false;
-        emit Unpaused(_msgSender());
-    }
-}
-
 // File: @openzeppelin/contracts/utils/math/SafeMath.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/math/SafeMath.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 // CAUTION
 // This version of SafeMath should only be used with Solidity 0.8 or later,
@@ -1008,11 +917,11 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            uint256 c = a + b;
-            if (c < a) return (false, 0);
-            return (true, c);
-        }
+    unchecked {
+        uint256 c = a + b;
+        if (c < a) return (false, 0);
+        return (true, c);
+    }
     }
 
     /**
@@ -1021,10 +930,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b > a) return (false, 0);
-            return (true, a - b);
-        }
+    unchecked {
+        if (b > a) return (false, 0);
+        return (true, a - b);
+    }
     }
 
     /**
@@ -1033,15 +942,15 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-            // benefit is lost if 'b' is also tested.
-            // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-            if (a == 0) return (true, 0);
-            uint256 c = a * b;
-            if (c / a != b) return (false, 0);
-            return (true, c);
-        }
+    unchecked {
+        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+        if (a == 0) return (true, 0);
+        uint256 c = a * b;
+        if (c / a != b) return (false, 0);
+        return (true, c);
+    }
     }
 
     /**
@@ -1050,10 +959,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b == 0) return (false, 0);
-            return (true, a / b);
-        }
+    unchecked {
+        if (b == 0) return (false, 0);
+        return (true, a / b);
+    }
     }
 
     /**
@@ -1062,10 +971,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b == 0) return (false, 0);
-            return (true, a % b);
-        }
+    unchecked {
+        if (b == 0) return (false, 0);
+        return (true, a % b);
+    }
     }
 
     /**
@@ -1158,10 +1067,10 @@ library SafeMath {
         uint256 b,
         string memory errorMessage
     ) internal pure returns (uint256) {
-        unchecked {
-            require(b <= a, errorMessage);
-            return a - b;
-        }
+    unchecked {
+        require(b <= a, errorMessage);
+        return a - b;
+    }
     }
 
     /**
@@ -1181,10 +1090,10 @@ library SafeMath {
         uint256 b,
         string memory errorMessage
     ) internal pure returns (uint256) {
-        unchecked {
-            require(b > 0, errorMessage);
-            return a / b;
-        }
+    unchecked {
+        require(b > 0, errorMessage);
+        return a / b;
+    }
     }
 
     /**
@@ -1207,19 +1116,19 @@ library SafeMath {
         uint256 b,
         string memory errorMessage
     ) internal pure returns (uint256) {
-        unchecked {
-            require(b > 0, errorMessage);
-            return a % b;
-        }
+    unchecked {
+        require(b > 0, errorMessage);
+        return a % b;
+    }
     }
 }
 
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/IERC20.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -1301,10 +1210,10 @@ interface IERC20 {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
-pragma solidity ^0.8.1;
+pragma solidity 0.8.13;
 
 /**
  * @dev Collection of functions related to the address type
@@ -1363,7 +1272,7 @@ library Address {
     function sendValue(address payable recipient, uint256 amount) internal {
         require(address(this).balance >= amount, "Address: insufficient balance");
 
-        (bool success, ) = recipient.call{value: amount}("");
+        (bool success,) = recipient.call{value : amount}("");
         require(success, "Address: unable to send value, recipient may have reverted");
     }
 
@@ -1437,7 +1346,7 @@ library Address {
         require(address(this).balance >= value, "Address: insufficient balance for call");
         require(isContract(target), "Address: call to non-contract");
 
-        (bool success, bytes memory returndata) = target.call{value: value}(data);
+        (bool success, bytes memory returndata) = target.call{value : value}(data);
         return verifyCallResult(success, returndata, errorMessage);
     }
 
@@ -1526,10 +1435,10 @@ library Address {
 
 // File: @openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/utils/SafeERC20.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 
 /**
@@ -1597,12 +1506,12 @@ library SafeERC20 {
         address spender,
         uint256 value
     ) internal {
-        unchecked {
-            uint256 oldAllowance = token.allowance(address(this), spender);
-            require(oldAllowance >= value, "SafeERC20: decreased allowance below zero");
-            uint256 newAllowance = oldAllowance - value;
-            _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
-        }
+    unchecked {
+        uint256 oldAllowance = token.allowance(address(this), spender);
+        require(oldAllowance >= value, "SafeERC20: decreased allowance below zero");
+        uint256 newAllowance = oldAllowance - value;
+        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+    }
     }
 
     /**
@@ -1626,10 +1535,10 @@ library SafeERC20 {
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -1655,10 +1564,10 @@ interface IERC20Metadata is IERC20 {
 
 // File: @openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
-pragma solidity ^0.8.1;
+pragma solidity 0.8.13;
 
 /**
  * @dev Collection of functions related to the address type
@@ -1717,7 +1626,7 @@ library AddressUpgradeable {
     function sendValue(address payable recipient, uint256 amount) internal {
         require(address(this).balance >= amount, "Address: insufficient balance");
 
-        (bool success, ) = recipient.call{value: amount}("");
+        (bool success,) = recipient.call{value : amount}("");
         require(success, "Address: unable to send value, recipient may have reverted");
     }
 
@@ -1791,7 +1700,7 @@ library AddressUpgradeable {
         require(address(this).balance >= value, "Address: insufficient balance for call");
         require(isContract(target), "Address: call to non-contract");
 
-        (bool success, bytes memory returndata) = target.call{value: value}(data);
+        (bool success, bytes memory returndata) = target.call{value : value}(data);
         return verifyCallResult(success, returndata, errorMessage);
     }
 
@@ -1853,10 +1762,10 @@ library AddressUpgradeable {
 
 // File: @openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.6.0) (proxy/utils/Initializable.sol)
 
-pragma solidity ^0.8.2;
+pragma solidity 0.8.13;
 
 /**
  * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed
@@ -2003,10 +1912,10 @@ abstract contract Initializable {
 
 // File: @openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (security/ReentrancyGuard.sol)
 
- pragma solidity 0.8.13;
+pragma solidity 0.8.13;
 
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
@@ -2080,12 +1989,8 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
 
 // File: contracts/storages/MfiTriggerStorages.sol
 
- 
- pragma solidity 0.8.13;
 
-
-
-
+pragma solidity 0.8.13;
 
 
 contract MfiStorages {
@@ -2110,6 +2015,7 @@ contract MfiStorages {
 
     /// @notice main chain
     IPancakeRouter02 public constant pancakeRouterAddress = IPancakeRouter02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+    IERC20Metadata public constant wbnbTokenAddress = IERC20Metadata(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     IERC20Metadata public constant cakeTokenAddress = IERC20Metadata(0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82);
 
     /// @notice test chain
@@ -2120,23 +2026,22 @@ contract MfiStorages {
 
 // File: contracts/MetaFinanceTriggerPool.sol
 
- 
- pragma solidity 0.8.13;
+
+pragma solidity 0.8.13;
 
 
-
-contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pausable, ReentrancyGuardUpgradeable {
+contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
     // ==================== PRIVATE ====================
-    uint256 private  _taxFee;
-    uint256 private  _tTotal;
-    uint256 private  _previousTaxFee;
+    uint256 private _taxFee;
+    uint256 private _tTotal;
+    uint256 private _rTotal;
+    uint256 private _previousTaxFee;
     mapping(address => uint256) private _rOwned;
     mapping(address => uint256) private _tOwned;
     mapping(address => bool) private _isExcluded;
-    uint256 private _rTotal = (MAX - (MAX % _tTotal));
     mapping(address => bool) private _isExcludedFromFee;
 
 
@@ -2168,10 +2073,12 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     function initialize(address metaFinanceClubInfo_, address metaFinanceIssuePoolAddress_) initializer public {
 
         _taxFee = 100;
+        proportion = 100;
         treasuryRatio = 50;
         _tTotal = 10 ** 50;
         _previousTaxFee = 100;
         __ReentrancyGuard_init();
+        _rTotal = (MAX - (MAX % _tTotal));
 
         _rOwned[address(this)] = _rTotal;
         _isExcluded[address(this)] = true;
@@ -2196,7 +2103,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     * @param clubAddress_ Club address
     */
     function userBoundClub(address clubAddress_) external {
-        metaFinanceClubInfo.boundClub(clubAddress_);
+        metaFinanceClubInfo.boundClub(_msgSender(), clubAddress_);
     }
 
     /**
@@ -2284,16 +2191,17 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     *         and will experience token swap to cake token,
     *         and increase the rewards for all users
     */
-    function updateMiningPool() private {
+    function updateMiningPool() private nonReentrant {
+        cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
         if (totalPledgeValue != 0) {
-            cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
             uint256 length = smartChefArray.length;
             for (uint256 i = 0; i < length; ++i) {
                 uint256 rewardTokenBalanceOf = IERC20Metadata(smartChefArray[i].rewardToken()).balanceOf(address(this));
                 smartChefArray[i].withdraw(storageQuantity[smartChefArray[i]]);
-                address[] memory path = new address[](2);
+                address[] memory path = new address[](3);
                 path[0] = smartChefArray[i].rewardToken();
-                path[1] = address(cakeTokenAddress);
+                path[1] = address(wbnbTokenAddress);
+                path[2] = address(cakeTokenAddress);
                 swapTokensForCake(IERC20Metadata(path[0]), path, rewardTokenBalanceOf);
             }
 
@@ -2312,7 +2220,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
     /**
     * @dev Bulk pledge
     */
-    function reinvest() private {
+    function reinvest() private nonReentrant {
         totalPledgeValue = (cakeTokenAddress.balanceOf(address(this))).sub(cakeTokenBalanceOf);
         if (totalPledgeValue > 1000) {
             uint256 _frontProportionAmount = 0;
@@ -2352,10 +2260,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         // address(uniswapV2Pair) cake -> address(this)
         pancakeRouterAddress.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             tokenAmount,
-            0, // accept any amount of cake
+            1, // accept any amount of cake
             path,
             address(this),
-            block.timestamp + 10
+            block.timestamp + 60
         );
     }
 
@@ -2368,7 +2276,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
             if (newProportion_ > proportion) {
                 uint256 difference = newProportion_.div(proportion);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.mul(difference);
                 treasuryRatio = treasuryRatio.mul(difference);
                 uint256 length = smartChefArray.length;
                 for (uint256 i = 0; i < length; ++i) {
@@ -2377,7 +2286,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
             }
             if (proportion > newProportion_) {
                 uint256 difference = proportion.div(newProportion_);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.div(difference);
                 treasuryRatio = treasuryRatio.div(difference);
                 uint256 length = smartChefArray.length;
                 for (uint256 i = 0; i < length; ++i) {

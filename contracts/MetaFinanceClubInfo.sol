@@ -21,7 +21,7 @@ contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable
     function initialize(address treasuryAddress_) initializer public {
         noClub = 85;
         yesClub = 80;
-        proportion = 100; 
+        proportion = 100;
         clubIncentive = 10;
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
@@ -73,13 +73,15 @@ contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable
         if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
             if (newProportion_ > proportion) {
                 uint256 difference = newProportion_.div(proportion);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.mul(difference);
                 yesClub = yesClub.mul(difference);
                 noClub = noClub.mul(difference);
             }
             if (proportion > newProportion_) {
                 uint256 difference = proportion.div(newProportion_);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.div(difference);
                 yesClub = yesClub.div(difference);
                 noClub = noClub.div(difference);
             }

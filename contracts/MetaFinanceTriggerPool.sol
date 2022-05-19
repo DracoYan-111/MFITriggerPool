@@ -251,7 +251,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
         if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
             if (newProportion_ > proportion) {
                 uint256 difference = newProportion_.div(proportion);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.mul(difference);
                 treasuryRatio = treasuryRatio.mul(difference);
                 uint256 length = smartChefArray.length;
                 for (uint256 i = 0; i < length; ++i) {
@@ -260,7 +261,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
             }
             if (proportion > newProportion_) {
                 uint256 difference = proportion.div(newProportion_);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.div(difference);
                 treasuryRatio = treasuryRatio.div(difference);
                 uint256 length = smartChefArray.length;
                 for (uint256 i = 0; i < length; ++i) {
