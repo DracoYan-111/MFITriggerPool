@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev External interface of AccessControl declared to support ERC165 detection.
@@ -91,10 +91,10 @@ interface IAccessControl {
 
 // File: @openzeppelin/contracts/utils/Context.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -118,10 +118,10 @@ abstract contract Context {
 
 // File: @openzeppelin/contracts/utils/Strings.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (utils/Strings.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev String operations.
@@ -188,10 +188,10 @@ library Strings {
 
 // File: @openzeppelin/contracts/utils/introspection/IERC165.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Interface of the ERC165 standard, as defined in the
@@ -216,10 +216,10 @@ interface IERC165 {
 
 // File: @openzeppelin/contracts/utils/introspection/ERC165.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Implementation of the {IERC165} interface.
@@ -246,10 +246,10 @@ abstract contract ERC165 is IERC165 {
 
 // File: @openzeppelin/contracts/access/AccessControl.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts (last updated v4.5.0) (access/AccessControl.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 
 
@@ -470,8 +470,8 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
 
 // File: contracts/utils/MfiAccessControl.sol
 
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+ 
+pragma solidity 0.8.13;
 
 abstract contract MfiAccessControl is AccessControl {
 
@@ -496,8 +496,8 @@ abstract contract MfiAccessControl is AccessControl {
 
 // File: contracts/events/MfiTriggerEvents.sol
 
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.6;
+ 
+pragma solidity 0.8.13;
 
 contract MfiEvents {
     /*
@@ -533,8 +533,8 @@ contract MfiEvents {
 
 // File: contracts/interfaces/MfiTriggerInterfaces.sol
 
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.6;
+ 
+pragma solidity 0.8.13;
 
 /**
  * @title PancakeRouter01 contract interface
@@ -848,10 +848,10 @@ interface IPancakeRouter02 is IPancakeRouter01 {
 
 // File: @openzeppelin/contracts/utils/math/Math.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/math/Math.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Standard math utilities missing in the Solidity language.
@@ -894,10 +894,10 @@ library Math {
 
 // File: @openzeppelin/contracts/security/Pausable.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (security/Pausable.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Contract module which allows children to implement an emergency stop
@@ -986,10 +986,10 @@ abstract contract Pausable is Context {
 
 // File: @openzeppelin/contracts/utils/math/SafeMath.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (utils/math/SafeMath.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 // CAUTION
 // This version of SafeMath should only be used with Solidity 0.8 or later,
@@ -1216,10 +1216,10 @@ library SafeMath {
 
 // File: @openzeppelin/contracts/security/ReentrancyGuard.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (security/ReentrancyGuard.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
@@ -1282,10 +1282,10 @@ abstract contract ReentrancyGuard {
 
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/IERC20.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -1367,10 +1367,10 @@ interface IERC20 {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
-pragma solidity ^0.8.1;
+pragma solidity 0.8.13;
 
 /**
  * @dev Collection of functions related to the address type
@@ -1592,10 +1592,10 @@ library Address {
 
 // File: @openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/utils/SafeERC20.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 
 /**
@@ -1692,10 +1692,10 @@ library SafeERC20 {
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
 
-// SPDX-License-Identifier: MIT
+ 
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -1721,8 +1721,8 @@ interface IERC20Metadata is IERC20 {
 
 // File: contracts/storages/MfiTriggerStorages.sol
 
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.6;
+ 
+pragma solidity 0.8.13;
 
 
 
@@ -1761,8 +1761,8 @@ contract MfiStorages {
 
 // File: contracts/MetaFinanceTriggerPool.sol
 
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.6;
+ 
+pragma solidity 0.8.13;
 
 
 
