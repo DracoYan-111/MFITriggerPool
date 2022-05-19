@@ -82,16 +82,16 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
     * @notice nonReentrant
     */
     function getReward() external nonReentrant {
+        uint256 generateQuantity = userData[_msgSender()].generateQuantity;
         uint256 reward = userAward(_msgSender());
         userData[_msgSender()].lastTime = Math.min(block.timestamp, userData[_msgSender()].enderTime);
         userData[_msgSender()].generateQuantity = 0;
         block.timestamp >= userData[_msgSender()].enderTime ?
-        userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = userData[_msgSender()].pledgeTotal.sub(reward);
+        userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = (userData[_msgSender()].pledgeTotal.add(generateQuantity)).sub(reward);
         received[_msgSender()] = received[_msgSender()].add(reward);
         rewardsToken.safeTransfer(_msgSender(), reward);
         emit RewardPaid(_msgSender(), reward);
     }
-
     /* ========== VIEWS ========== */
     /**
     * @dev Rewards per token
