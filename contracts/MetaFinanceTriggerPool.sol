@@ -48,6 +48,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     function initialize(address metaFinanceClubInfo_, address metaFinanceIssuePoolAddress_) initializer public {
 
         _taxFee = 100;
+        proportion = 100;
         treasuryRatio = 50;
         _tTotal = 10 ** 50;
         _previousTaxFee = 100;
