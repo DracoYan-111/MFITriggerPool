@@ -2,8 +2,8 @@
 
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.5.0) (proxy/Proxy.sol)
+pragma solidity 0.8.6;
 
-pragma solidity ^0.8.0;
 
 /**
  * @dev This abstract contract provides a fallback function that delegates all calls to another contract using the EVM
@@ -23,16 +23,16 @@ abstract contract Proxy {
      */
     function _delegate(address implementation) internal virtual {
         assembly {
-        // Copy msg.data. We take full control of memory in this inline assembly
-        // block because it will not return to Solidity code. We overwrite the
-        // Solidity scratch pad at memory position 0.
+            // Copy msg.data. We take full control of memory in this inline assembly
+            // block because it will not return to Solidity code. We overwrite the
+            // Solidity scratch pad at memory position 0.
             calldatacopy(0, 0, calldatasize())
 
-        // Call the implementation.
-        // out and outsize are 0 because we don't know the size yet.
+            // Call the implementation.
+            // out and outsize are 0 because we don't know the size yet.
             let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
 
-        // Copy the returned data.
+            // Copy the returned data.
             returndatacopy(0, 0, returndatasize())
 
             switch result
@@ -75,6 +75,7 @@ abstract contract Proxy {
      * is empty.
      */
     receive() external payable virtual {
+        _fallback();
     }
 
     /**
@@ -88,10 +89,10 @@ abstract contract Proxy {
 
 // File: @openzeppelin/contracts/proxy/beacon/IBeacon.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (proxy/beacon/IBeacon.sol)
 
-pragma solidity ^0.8.0;
+
 
 /**
  * @dev This is the interface that {BeaconProxy} expects of its beacon.
@@ -107,10 +108,10 @@ interface IBeacon {
 
 // File: @openzeppelin/contracts/interfaces/draft-IERC1822.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (interfaces/draft-IERC1822.sol)
 
-pragma solidity ^0.8.0;
+
 
 /**
  * @dev ERC1822: Universal Upgradeable Proxy Standard (UUPS) documents a method for upgradeability through a simplified
@@ -130,10 +131,10 @@ interface IERC1822Proxiable {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
-pragma solidity ^0.8.1;
+
 
 /**
  * @dev Collection of functions related to the address type
@@ -355,10 +356,10 @@ library Address {
 
 // File: @openzeppelin/contracts/utils/StorageSlot.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/StorageSlot.sol)
 
-pragma solidity ^0.8.0;
+
 
 /**
  * @dev Library for reading and writing primitive types to specific storage slots.
@@ -442,10 +443,10 @@ library StorageSlot {
 
 // File: @openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol
 
- 
+
 // OpenZeppelin Contracts (last updated v4.5.0) (proxy/ERC1967/ERC1967Upgrade.sol)
 
-pragma solidity ^0.8.2;
+
 
 
 
@@ -628,10 +629,10 @@ abstract contract ERC1967Upgrade {
 
 // File: @openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (proxy/ERC1967/ERC1967Proxy.sol)
 
-pragma solidity ^0.8.0;
+
 
 
 /**
@@ -662,10 +663,10 @@ contract ERC1967Proxy is Proxy, ERC1967Upgrade {
 
 // File: @openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (proxy/transparent/TransparentUpgradeableProxy.sol)
 
-pragma solidity ^0.8.0;
+
 
 /**
  * @dev This contract implements a proxy that is upgradeable by an admin.
@@ -788,10 +789,10 @@ contract TransparentUpgradeableProxy is ERC1967Proxy {
 
 // File: @openzeppelin/contracts/utils/Context.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
-pragma solidity ^0.8.0;
+
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -815,10 +816,10 @@ abstract contract Context {
 
 // File: @openzeppelin/contracts/access/Ownable.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)
 
-pragma solidity ^0.8.0;
+
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -892,10 +893,10 @@ abstract contract Ownable is Context {
 
 // File: @openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol
 
- 
+
 // OpenZeppelin Contracts v4.4.1 (proxy/transparent/ProxyAdmin.sol)
 
-pragma solidity ^0.8.0;
+
 
 
 /**
@@ -974,8 +975,8 @@ contract ProxyAdmin is Ownable {
 
 // File: contracts/utils/MfiContractPorxy.sol
 
- 
-pragma solidity ^0.8.6;
+
+
 
 
 contract MfiContractPorxy is ProxyAdmin {}

@@ -36,6 +36,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         require(amount_ > 0, "MFIP:E1");
         _totalSupply = _totalSupply.add(amount_);
         _balances[account_] = _balances[account_].add(amount_);
+
         emit Staked(account_, amount_);
     }
 
@@ -49,6 +50,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         require(amount_ > 0, "MFIP:E2");
         _totalSupply = _totalSupply.sub(amount_);
         _balances[account_] = _balances[account_].sub(amount_);
+
         emit Withdrawn(account_, amount_);
     }
 
@@ -69,6 +71,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         userData_.lastTime = blockTimestamp;
         userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity.sub(generateQuantity));
         userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
+
         emit UserHarvest(_msgSender(), reward);
     }
 
@@ -82,9 +85,11 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         userData[_msgSender()].lastTime = Math.min(block.timestamp, userData[_msgSender()].enderTime);
         userData[_msgSender()].generateQuantity = 0;
         block.timestamp >= userData[_msgSender()].enderTime ?
-        userData[_msgSender()].pledgeTotal = 0 : userData[_msgSender()].pledgeTotal = (userData[_msgSender()].pledgeTotal.add(generateQuantity)).sub(reward);
+        userData[_msgSender()].pledgeTotal = 0 :
+        userData[_msgSender()].pledgeTotal = (userData[_msgSender()].pledgeTotal.add(generateQuantity)).sub(reward);
         received[_msgSender()] = received[_msgSender()].add(reward);
         rewardsToken.safeTransfer(_msgSender(), reward);
+
         emit RewardPaid(_msgSender(), reward);
     }
     /* ========== VIEWS ========== */
@@ -121,7 +126,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
     */
     function userAward(address account_) public view returns (uint256){
         UserPledge memory userData_ = userData[account_];
-        if (userData_.startTime == 0) return 0;
+        if (userData_.startTime <= 0) return 0;
         return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
     }
 

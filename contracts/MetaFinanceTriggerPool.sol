@@ -115,7 +115,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev Anyone can update the pool
     */
-    function renewPool() external beforeStaking {}
+    function renewPool() external beforeStaking nonReentrant{}
 
     /**
     * @dev Query the user's current principal amount
@@ -143,7 +143,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     *         and will experience token swap to cake token,
     *         and increase the rewards for all users
     */
-    function updateMiningPool() private {
+    function updateMiningPool() private nonReentrant{
         cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
         if (totalPledgeValue != 0) {
             uint256 length = smartChefArray.length;
@@ -172,7 +172,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev Bulk pledge
     */
-    function reinvest() private {
+    function reinvest() private nonReentrant{
         totalPledgeValue = (cakeTokenAddress.balanceOf(address(this))).sub(cakeTokenBalanceOf);
         if (totalPledgeValue > 1000) {
             uint256 _frontProportionAmount = 0;
@@ -225,11 +225,12 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     * @dev Modify the precision
     * @param newProportion_ New Club Fee Scale
     */
-    function setProportion(uint256 newProportion_) external beforeStaking onlyRole(DATA_ADMINISTRATOR) {
+    function setProportion(uint256 newProportion_) external beforeStaking nonReentrant onlyRole(DATA_ADMINISTRATOR) {
         if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
             if (newProportion_ > proportion) {
                 uint256 difference = newProportion_.div(proportion);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.mul(difference);
                 treasuryRatio = treasuryRatio.mul(difference);
                 uint256 length = smartChefArray.length;
                 for (uint256 i = 0; i < length; ++i) {
@@ -238,7 +239,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
             }
             if (proportion > newProportion_) {
                 uint256 difference = proportion.div(newProportion_);
-                proportion = newProportion_;
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.div(difference);
                 treasuryRatio = treasuryRatio.div(difference);
                 uint256 length = smartChefArray.length;
                 for (uint256 i = 0; i < length; ++i) {
@@ -252,7 +254,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     * @dev Modify the fee ratio
     * @param newTreasuryRatio_ New treasury fee ratio
     */
-    function setFeeRatio(uint256 newTreasuryRatio_) external beforeStaking onlyRole(DATA_ADMINISTRATOR) {
+    function setFeeRatio(uint256 newTreasuryRatio_) external beforeStaking nonReentrant onlyRole(DATA_ADMINISTRATOR) {
         if (newTreasuryRatio_ != 0) treasuryRatio = newTreasuryRatio_;
     }
 
@@ -261,7 +263,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     * @notice Use cautiously and exit with guaranteed principal!!!
     * @dev Needs to be for emergency.
     */
-    function projectPartyEmergencyWithdraw() external onlyRole(PROJECT_ADMINISTRATOR) {
+    function projectPartyEmergencyWithdraw() external nonReentrant onlyRole(PROJECT_ADMINISTRATOR) {
         if (totalPledgeAmount != 0) {
             uint256 length = smartChefArray.length;
             for (uint256 i = 0; i < length; ++i) {
@@ -275,7 +277,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     * @param storageProportion_ Array of mining pool ratios
     * @param smartChefArray_ Mining pool address
     */
-    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) external beforeStaking onlyRole(PROJECT_ADMINISTRATOR) {
+    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) external beforeStaking nonReentrant onlyRole(PROJECT_ADMINISTRATOR) {
         require(storageProportion_.length == smartChefArray_.length, "MFTP:E4");
         smartChefArray = smartChefArray_;
         uint256 length = smartChefArray.length;
@@ -287,7 +289,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev claim Tokens
     */
-    function claimTokenToTreasury() external beforeStaking onlyRole(MONEY_ADMINISTRATOR) {
+    function claimTokenToTreasury() external beforeStaking nonReentrant onlyRole(MONEY_ADMINISTRATOR) {
         cakeTokenAddress.safeTransfer(metaFinanceClubInfo.treasuryAddress(), exchequerAmount);
         exchequerAmount = 0;
     }
@@ -301,7 +303,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
         address token,
         address to,
         uint256 amount
-    ) external onlyRole(MONEY_ADMINISTRATOR) {
+    ) external nonReentrant onlyRole(MONEY_ADMINISTRATOR) {
         if (amount > 0) {
             if (token == address(0)) {
                 //payable(to).transfer(amount);
@@ -315,6 +317,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     }
 
     // ==================== MODIFIER ====================
+
     modifier beforeStaking(){
         updateMiningPool();
         _;
