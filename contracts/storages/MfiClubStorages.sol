@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract MfiClubStorages {
 
-    uint256 public yesClub = 80;
-    uint256 public noClub = 85;
+    uint256 public yesClub;
+    uint256 public noClub;
     address[] public userArray;
     address[] public clubArray;
     address public treasuryAddress;
-    uint256 public clubIncentive = 10;
+    uint256 public clubIncentive;
 
     // User Club Information
     mapping(address => address) public userClub;

@@ -5,16 +5,30 @@ import "./events/MfiIssueEvents.sol";
 import "./utils/MfiAccessControl.sol";
 import "./storages/MfiIssueStorages.sol";
 
-contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, ReentrancyGuard, MfiAccessControl {
+contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
     /* ========== CONSTRUCTOR ========== */
-    constructor(address _rewardsToken, address metaFinanceClubInfo_){
+    //    constructor(address _rewardsToken, address metaFinanceClubInfo_){
+    //        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    //        rewardsToken = IERC20Metadata(_rewardsToken);
+    //        metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
+    //    }
+
+    function initialize(address _rewardsToken, address metaFinanceClubInfo_) initializer public {
+        lockDays = 30;
+        //180 days;
+        __ReentrancyGuard_init();
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
         metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
     }
+
+    function getInitializeAbi(address _rewardsToken, address metaFinanceClubInfo_) public pure returns (bytes memory){
+        return abi.encodeWithSelector(this.initialize.selector, _rewardsToken, metaFinanceClubInfo_);
+    }
+
 
     /* ========== EXTERNAL ========== */
     /**

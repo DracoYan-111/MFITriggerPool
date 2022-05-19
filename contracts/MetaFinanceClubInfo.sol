@@ -4,16 +4,31 @@ pragma solidity 0.8.6;
 import "./utils/MfiAccessControl.sol";
 import "./storages/MfiClubStorages.sol";
 
-contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable {
     using SafeMath for uint256;
 
     /* ========== EVENT ========== */
     event UserRegistration(address userAddress, address clubAddress);
 
     /* ========== CONSTRUCTOR ========== */
-    constructor (address treasuryAddress_)  {
+    //constructor (address treasuryAddress_)  {
+    //        treasuryAddress = treasuryAddress_;
+    //        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    //    }
+
+    function initialize(address treasuryAddress_) initializer public {
+        noClub = 85;
+        yesClub = 80;
+        proportion = 100;
+        clubIncentive = 10;
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    }
+
+    function getInitializeAbi(address treasuryAddress_) public pure returns(bytes memory){
+        return abi.encodeWithSelector(this.initialize.selector,treasuryAddress_);
     }
 
     /* ========== EXTERNAL ========== */
