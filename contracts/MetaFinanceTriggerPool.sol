@@ -21,29 +21,6 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
 
 
     /* ========== CONSTRUCTOR ========== */
-    //    constructor (
-    //    //address exchequerAddress_,
-    //        address metaFinanceClubInfo_,
-    //        address metaFinanceIssuePoolAddress_
-    //    )  {
-    //
-    //        // MAX = ~uint256(0);
-    //        // _tTotal = 10 * 10 ** 30;
-    //        // _rTotal = (MAX - (MAX % _tTotal));
-    //        // _taxFee = 100;
-    //        // _previousTaxFee = 100;
-    //        //exchequerAddress = exchequerAddress_;
-    //        _rOwned[address(this)] = _rTotal;
-    //        _isExcluded[address(this)] = true;
-    //        _isExcludedFromFee[address(this)] = true;
-    //
-    //        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    //        _tOwned[address(this)] = tokenFromReflection(_rOwned[address(this)]);
-    //
-    //        metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
-    //        metaFinanceIssuePoolAddress = IMetaFinanceIssuePool(metaFinanceIssuePoolAddress_);
-    //
-    //    }
 
     function initialize(address metaFinanceClubInfo_, address metaFinanceIssuePoolAddress_) initializer public {
 
@@ -231,7 +208,8 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
         tokenAddress.safeApprove(address(pancakeRouterAddress), 0);
         tokenAddress.safeApprove(address(pancakeRouterAddress), tokenAmount);
 
-        // address(this) Reward token -> address(uniswapV2Pair)
+        // address(this) Reward token -> address(uniswapV2Pair) wbnb
+        // address(uniswapV2Pair) wbnb -> address(uniswapV2Pair) cake
         // address(uniswapV2Pair) cake -> address(this)
         pancakeRouterAddress.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             tokenAmount,

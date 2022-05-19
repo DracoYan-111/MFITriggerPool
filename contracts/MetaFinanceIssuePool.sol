@@ -10,11 +10,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
     using SafeERC20 for IERC20Metadata;
 
     /* ========== CONSTRUCTOR ========== */
-    //    constructor(address _rewardsToken, address metaFinanceClubInfo_){
-    //        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    //        rewardsToken = IERC20Metadata(_rewardsToken);
-    //        metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
-    //    }
 
     function initialize(address _rewardsToken, address metaFinanceClubInfo_) initializer public {
         lockDays = 30;

@@ -13,10 +13,6 @@ contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable
     event UserRegistration(address userAddress, address clubAddress);
 
     /* ========== CONSTRUCTOR ========== */
-    //constructor (address treasuryAddress_)  {
-    //        treasuryAddress = treasuryAddress_;
-    //        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    //    }
 
     function initialize(address treasuryAddress_) initializer public {
         noClub = 85;

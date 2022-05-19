@@ -34,8 +34,4 @@ contract MfiStorages {
     IERC20Metadata public constant wbnbTokenAddress = IERC20Metadata(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     IERC20Metadata public constant cakeTokenAddress = IERC20Metadata(0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82);
 
-    /// @notice test chain
-    //IPancakeRouter02 public constant pancakeRouterAddress = IPancakeRouter02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
-    //IERC20Metadata public constant cakeTokenAddress = IERC20Metadata(0xF9f93cF501BFaDB6494589Cb4b4C15dE49E85D0e);
-
 }
