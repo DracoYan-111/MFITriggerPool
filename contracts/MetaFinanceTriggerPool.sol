@@ -78,7 +78,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     * @param clubAddress_ Club address
     */
     function userBoundClub(address clubAddress_) external {
-        metaFinanceClubInfo.boundClub(clubAddress_);
+        metaFinanceClubInfo.boundClub(_msgSender(), clubAddress_);
     }
 
     /**

@@ -141,11 +141,21 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
     function notifyRewardAmount(uint256 startingTime_, uint256 reward_) external updateReward(address(0)) onlyRole(DATA_ADMINISTRATOR) {
 
         rewardRate = reward_;
-        lastUpdateTime = startingTime_;
+        if (startingTime_ > 0) {
+            lastUpdateTime = startingTime_;
+            poolStartTime = startingTime_;
+        }
 
         emit RewardAdded(reward_);
     }
 
+    /**
+    * @dev Modify production time
+    * @param newLockDays_ New lock time
+    */
+    function setLockDays(uint256 newLockDays_) external onlyRole(DATA_ADMINISTRATOR) {
+        lockDays = newLockDays_;
+    }
     /* ========== MODIFIERS ========== */
     modifier updateReward(address account) {
         rewardPerTokenStored = rewardPerToken();

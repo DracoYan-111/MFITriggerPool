@@ -23,6 +23,7 @@ contract MfiIssueStorages {
         uint256 numberOfRewardsPerSecond;
     }
 
+    uint256 public poolStartTime;
     uint256 public _totalSupply;
     uint256 public rewardRate;
     uint256 public lastUpdateTime;

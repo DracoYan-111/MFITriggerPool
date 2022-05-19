@@ -21,28 +21,29 @@ contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable
     function initialize(address treasuryAddress_) initializer public {
         noClub = 85;
         yesClub = 80;
-        proportion = 100;
+        proportion = 100; 
         clubIncentive = 10;
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    function getInitializeAbi(address treasuryAddress_) public pure returns(bytes memory){
-        return abi.encodeWithSelector(this.initialize.selector,treasuryAddress_);
+    function getInitializeAbi(address treasuryAddress_) public pure returns (bytes memory){
+        return abi.encodeWithSelector(this.initialize.selector, treasuryAddress_);
     }
 
     /* ========== EXTERNAL ========== */
     /**
     * @dev User binding club
+    * @param userAddress_ User address
     * @param clubAddress_ Club address
     */
-    function boundClub(address clubAddress_) external onlyRole(META_FINANCE_TRIGGER_POOL) {
-        require(userClub[_msgSender()] == address(0) && clubAddress_ != _msgSender() && treasuryAddress != address(0), "MFCI:E1");
-        userClub[_msgSender()] = clubAddress_;
-        userArray.push(_msgSender());
+    function boundClub(address userAddress_, address clubAddress_) external onlyRole(META_FINANCE_TRIGGER_POOL) {
+        require(userClub[userAddress_] == address(0) && clubAddress_ != userAddress_ && treasuryAddress != address(0), "MFCI:E1");
+        userClub[userAddress_] = clubAddress_;
+        userArray.push(userAddress_);
         if (clubAddress_ != treasuryAddress)
             clubArray.push(clubAddress_);
-        emit UserRegistration(_msgSender(), clubAddress_);
+        emit UserRegistration(userAddress_, clubAddress_);
     }
 
     /**

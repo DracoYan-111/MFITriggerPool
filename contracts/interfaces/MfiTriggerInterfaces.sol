@@ -169,9 +169,10 @@ interface IPancakeRouter01 {
 interface IMetaFinanceClubInfo {
     /**
     * @dev User binding club
+    * @param userAddress_ User address
     * @param clubAddress_ Club address
     */
-    function boundClub(address clubAddress_) external;
+    function boundClub(address userAddress_, address clubAddress_) external;
 
     /**
     * @dev Calculate the number of club rewards
