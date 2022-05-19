@@ -5,18 +5,18 @@ import "./utils/MfiAccessControl.sol";
 import "./events/MfiTriggerEvents.sol";
 import "./storages/MfiTriggerStorages.sol";
 
-contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pausable, ReentrancyGuardUpgradeable {
+contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
     // ==================== PRIVATE ====================
-    uint256 private  _taxFee;
-    uint256 private  _tTotal;
-    uint256 private  _previousTaxFee;
+    uint256 private _taxFee;
+    uint256 private _tTotal;
+    uint256 private _rTotal;
+    uint256 private _previousTaxFee;
     mapping(address => uint256) private _rOwned;
     mapping(address => uint256) private _tOwned;
     mapping(address => bool) private _isExcluded;
-    uint256 private _rTotal = (MAX - (MAX % _tTotal));
     mapping(address => bool) private _isExcludedFromFee;
 
 
@@ -52,6 +52,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Pau
         _tTotal = 10 ** 50;
         _previousTaxFee = 100;
         __ReentrancyGuard_init();
+        _rTotal = (MAX - (MAX % _tTotal));
 
         _rOwned[address(this)] = _rTotal;
         _isExcluded[address(this)] = true;
