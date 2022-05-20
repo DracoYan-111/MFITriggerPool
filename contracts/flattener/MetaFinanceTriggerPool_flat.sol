@@ -1118,6 +1118,7 @@ library SafeMath {
 
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/IERC20.sol)
 
+
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
@@ -1977,18 +1978,19 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
 
 
 
-contract MfiStorages {
+contract MfiTriggerStorages {
 
     uint256 public totalPledgeValue;
     uint256 public totalPledgeAmount;
     uint256 public treasuryRatio;
     uint256 public exchequerAmount;
-    //address public exchequerAddress;
     uint256 public cakeTokenBalanceOf;
     IMetaFinanceClubInfo public metaFinanceClubInfo;
     ISmartChefInitializable[] public smartChefArray;
     IMetaFinanceIssuePool public metaFinanceIssuePoolAddress;
 
+    // User has received
+    mapping(address => uint256) public userHasReceived;
     // User pledge amount
     mapping(address => uint256) public userPledgeAmount;
     // Storage quantity
@@ -2010,7 +2012,7 @@ contract MfiStorages {
 
 
 
-contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
+contract MetaFinanceTriggerPool is MfiEvents, MfiTriggerStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
@@ -2096,8 +2098,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
 
         cakeTokenAddress.safeTransfer(_msgSender(), amount_);
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount_);
-        if (numberOfAwards > 0)
+        if (numberOfAwards > 0) {
             cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
+            userHasReceived[_msgSender()] = userHasReceived[_msgSender()].add(numberOfAwards);
+        }
         takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
         metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
 
@@ -2113,6 +2117,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
 
         cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
         takenTransfer(_msgSender(), address(this), numberOfAwards);
+        userHasReceived[_msgSender()] = userHasReceived[_msgSender()].add(numberOfAwards);
 
         emit UserReceiveCake(_msgSender(), address(cakeTokenAddress), numberOfAwards, block.timestamp);
     }
@@ -2120,7 +2125,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev Anyone can update the pool
     */
-    function renewPool() external beforeStaking nonReentrant{}
+    function renewPool() external beforeStaking nonReentrant {}
 
     /**
     * @dev Query the user's current principal amount
@@ -2143,12 +2148,25 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     }
 
     /**
+    * @dev User data
+    * @param userAddress_ User address
+    * @return User data
+    */
+    function triggerUsersData(address userAddress_) external view returns (address, uint256, uint256, uint256){
+        return
+        (metaFinanceClubInfo.userClub(userAddress_),
+        rewardBalanceOf(userAddress_).sub(userPledgeAmount[userAddress_]),
+        userHasReceived[userAddress_],
+        userPledgeAmount[userAddress_]);
+    }
+
+    /**
     * @dev Update mining pool
     * @notice Batch withdraw,
     *         and will experience token swap to cake token,
     *         and increase the rewards for all users
     */
-    function updateMiningPool() private nonReentrant{
+    function updateMiningPool() private nonReentrant {
         cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
         if (totalPledgeValue != 0) {
             uint256 length = smartChefArray.length;
@@ -2177,7 +2195,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev Bulk pledge
     */
-    function reinvest() private nonReentrant{
+    function reinvest() private nonReentrant {
         totalPledgeValue = (cakeTokenAddress.balanceOf(address(this))).sub(cakeTokenBalanceOf);
         if (totalPledgeValue > 1000) {
             uint256 _frontProportionAmount = 0;

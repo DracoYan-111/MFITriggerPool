@@ -9,18 +9,19 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
-contract MfiStorages {
+contract MfiTriggerStorages {
 
     uint256 public totalPledgeValue;
     uint256 public totalPledgeAmount;
     uint256 public treasuryRatio;
     uint256 public exchequerAmount;
-    //address public exchequerAddress;
     uint256 public cakeTokenBalanceOf;
     IMetaFinanceClubInfo public metaFinanceClubInfo;
     ISmartChefInitializable[] public smartChefArray;
     IMetaFinanceIssuePool public metaFinanceIssuePoolAddress;
 
+    // User has received
+    mapping(address => uint256) public userHasReceived;
     // User pledge amount
     mapping(address => uint256) public userPledgeAmount;
     // Storage quantity

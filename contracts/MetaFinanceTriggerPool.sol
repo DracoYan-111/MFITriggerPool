@@ -5,7 +5,10 @@ import "./utils/MfiAccessControl.sol";
 import "./events/MfiTriggerEvents.sol";
 import "./storages/MfiTriggerStorages.sol";
 
-contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
+/**
+* @notice MfiTriggerEvents, MfiTriggerStorages, MfiAccessControl, ReentrancyGuardUpgradeable
+*/
+contract MetaFinanceTriggerPool is MfiTriggerEvents, MfiTriggerStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
@@ -91,8 +94,10 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
 
         cakeTokenAddress.safeTransfer(_msgSender(), amount_);
         uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount_);
-        if (numberOfAwards > 0)
+        if (numberOfAwards > 0) {
             cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
+            userHasReceived[_msgSender()] = userHasReceived[_msgSender()].add(numberOfAwards);
+        }
         takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
         metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
 
@@ -108,6 +113,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
 
         cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
         takenTransfer(_msgSender(), address(this), numberOfAwards);
+        userHasReceived[_msgSender()] = userHasReceived[_msgSender()].add(numberOfAwards);
 
         emit UserReceiveCake(_msgSender(), address(cakeTokenAddress), numberOfAwards, block.timestamp);
     }
@@ -115,7 +121,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev Anyone can update the pool
     */
-    function renewPool() external beforeStaking nonReentrant{}
+    function renewPool() external beforeStaking nonReentrant {}
 
     /**
     * @dev Query the user's current principal amount
@@ -138,12 +144,25 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     }
 
     /**
+    * @dev User data
+    * @param userAddress_ User address
+    * @return User data
+    */
+    function triggerUsersData(address userAddress_) external view returns (address, uint256, uint256, uint256){
+        return
+        (metaFinanceClubInfo.userClub(userAddress_),
+        rewardBalanceOf(userAddress_).sub(userPledgeAmount[userAddress_]),
+        userHasReceived[userAddress_],
+        userPledgeAmount[userAddress_]);
+    }
+
+    /**
     * @dev Update mining pool
     * @notice Batch withdraw,
     *         and will experience token swap to cake token,
     *         and increase the rewards for all users
     */
-    function updateMiningPool() private nonReentrant{
+    function updateMiningPool() private nonReentrant {
         cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
         if (totalPledgeValue != 0) {
             uint256 length = smartChefArray.length;
@@ -172,7 +191,7 @@ contract MetaFinanceTriggerPool is MfiEvents, MfiStorages, MfiAccessControl, Ree
     /**
     * @dev Bulk pledge
     */
-    function reinvest() private nonReentrant{
+    function reinvest() private nonReentrant {
         totalPledgeValue = (cakeTokenAddress.balanceOf(address(this))).sub(cakeTokenBalanceOf);
         if (totalPledgeValue > 1000) {
             uint256 _frontProportionAmount = 0;

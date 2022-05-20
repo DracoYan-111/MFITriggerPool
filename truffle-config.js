@@ -1,20 +1,26 @@
 const path = require("path");
 
 module.exports = {
-    // See <http://truffleframework.com/docs/advanced/configuration>
-    // to customize your Truffle configuration!
+    description: "Meta finance trigger pool contract",
+    authors: ["LongYan <https://github.com/YanLong-111>"],
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     license: "MIT",
+    compilers: {
+        solc: {
+            version: "0.8.6",
+            settings: {
+                optimizer: {
+                    enabled: true,
+                    runs: 200
+                }
+            }
+        }
+    },
     networks: {
-        develop: { // default with truffle unbox is 7545, but we can use develop to test changes, ex. truffle migrate --network develop
+        develop: {
             host: "127.0.0.1",
             port: 8545,
             network_id: "*"
-        }
-    },
-    compilers: {
-        solc: {
-            version: "0.8.6"
         }
     },
     dashboard: {
@@ -22,9 +28,4 @@ module.exports = {
         host: "localhost",
         verbose: true
     }
-    // ,bsc:{
-    //     host: "178.25.19.88", // Random IP for example purposes (do not use)
-    //     port: 80,
-    //     network_id: 1,
-    // }
 };

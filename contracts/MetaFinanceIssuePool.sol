@@ -5,6 +5,9 @@ import "./events/MfiIssueEvents.sol";
 import "./utils/MfiAccessControl.sol";
 import "./storages/MfiIssueStorages.sol";
 
+/**
+* @notice Context, MfiIssueStorages, MfiIssueEvents, MfiAccessControl, ReentrancyGuardUpgradeable
+*/
 contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
@@ -71,8 +74,9 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         userData_.lastTime = blockTimestamp;
         userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity.sub(generateQuantity));
         userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
+        received[_msgSender()] = received[_msgSender()].add(reward);
 
-        emit UserHarvest(_msgSender(), reward);
+        emit UserHarvest(_msgSender(), address(rewardsToken), reward);
     }
 
     /**
@@ -87,7 +91,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         block.timestamp >= userData[_msgSender()].enderTime ?
         userData[_msgSender()].pledgeTotal = 0 :
         userData[_msgSender()].pledgeTotal = (userData[_msgSender()].pledgeTotal.add(generateQuantity)).sub(reward);
-        received[_msgSender()] = received[_msgSender()].add(reward);
         rewardsToken.safeTransfer(_msgSender(), reward);
 
         emit RewardPaid(_msgSender(), reward);
@@ -128,6 +131,18 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         UserPledge memory userData_ = userData[account_];
         if (userData_.startTime <= 0) return 0;
         return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
+    }
+
+
+    /**
+    * @dev User data
+    * @param userAddress_ User address
+    * @return User data
+    */
+    function issueUserData(address userAddress_) external view returns (uint256, uint256){
+        return
+        (earned(userAddress_),
+        received[userAddress_]);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

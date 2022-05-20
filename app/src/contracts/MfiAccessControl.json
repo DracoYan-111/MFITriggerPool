@@ -104,6 +104,32 @@
     },
     {
       "inputs": [],
+      "name": "MAX",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "META_FINANCE_TRIGGER_POOL",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "MONEY_ADMINISTRATOR",
       "outputs": [
         {
@@ -118,19 +144,6 @@
     {
       "inputs": [],
       "name": "PROJECT_ADMINISTRATOR",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "UPDATE_ADMINISTRATOR",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -203,6 +216,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "proportion",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -258,7 +284,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DATA_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MONEY_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"PROJECT_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"UPDATE_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"grantRole(bytes32,address)\":{\"details\":\"Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.\"},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"renounceRole(bytes32,address)\":{\"details\":\"Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.\"},\"revokeRole(bytes32,address)\":{\"details\":\"Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/utils/MfiAccessControl.sol\":\"MfiAccessControl\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/AccessControl.sol\":{\"keccak256\":\"0x4a1a0ba12bf1a33f10d9fe226278cf59675c0b929d29e4da99658a079b27fb84\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bda1319db846d6d6f92d8a57a9bdee8bde1dc39aa7546165791692c24dd6f30a\",\"dweb:/ipfs/Qma5oZ7DmbdAjd8mpiW7mx896PDtwsQtCQ2hj9Upf7b7JK\"]},\"@openzeppelin/contracts/access/IAccessControl.sol\":{\"keccak256\":\"0x59ce320a585d7e1f163cd70390a0ef2ff9cec832e2aa544293a00692465a7a57\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bb2c137c343ef0c4c7ce7b18c1d108afdc9d315a04e48307288d2d05adcbde3a\",\"dweb:/ipfs/QmUxhrAQM3MM3FF5j7AtcXLXguWCJBHJ14BRdVtuoQc8Fh\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92\",\"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3\"]},\"@openzeppelin/contracts/utils/Strings.sol\":{\"keccak256\":\"0x32c202bd28995dd20c4347b7c6467a6d3241c74c8ad3edcbb610cd9205916c45\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8179c356adb19e70d6b31a1eedc8c5c7f0c00e669e2540f4099e3844c6074d30\",\"dweb:/ipfs/QmWFbivarEobbqhS1go64ootVuHfVohBseerYy9FTEd1W2\"]},\"@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0xd10975de010d89fd1c78dc5e8a9a7e7f496198085c151648f20cba166b32582b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fb0048dee081f6fffa5f74afc3fb328483c2a30504e94a0ddd2a5114d731ec4d\",\"dweb:/ipfs/QmZptt1nmYoA5SgjwnSgWqgUSDgm4q52Yos3xhnMv3MV43\"]},\"@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f\",\"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy\"]},\"project:/contracts/utils/MfiAccessControl.sol\":{\"keccak256\":\"0x7e5ea76a44fe37f374ff7daa391c65fe95db3e13d9aa69134fca1574076699e7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a572cec511f8b92beff4f0ce167d405403cd5f711c352571843a31583358be8e\",\"dweb:/ipfs/QmTw9RFP63F8p34QTg6zSzRicREQ7qhVBFLGyLXwmBhAhu\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DATA_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"META_FINANCE_TRIGGER_POOL\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MONEY_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"PROJECT_ADMINISTRATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proportion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"grantRole(bytes32,address)\":{\"details\":\"Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.\"},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"renounceRole(bytes32,address)\":{\"details\":\"Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.\"},\"revokeRole(bytes32,address)\":{\"details\":\"Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/utils/MfiAccessControl.sol\":\"MfiAccessControl\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/AccessControl.sol\":{\"keccak256\":\"0x4a1a0ba12bf1a33f10d9fe226278cf59675c0b929d29e4da99658a079b27fb84\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bda1319db846d6d6f92d8a57a9bdee8bde1dc39aa7546165791692c24dd6f30a\",\"dweb:/ipfs/Qma5oZ7DmbdAjd8mpiW7mx896PDtwsQtCQ2hj9Upf7b7JK\"]},\"@openzeppelin/contracts/access/IAccessControl.sol\":{\"keccak256\":\"0x59ce320a585d7e1f163cd70390a0ef2ff9cec832e2aa544293a00692465a7a57\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bb2c137c343ef0c4c7ce7b18c1d108afdc9d315a04e48307288d2d05adcbde3a\",\"dweb:/ipfs/QmUxhrAQM3MM3FF5j7AtcXLXguWCJBHJ14BRdVtuoQc8Fh\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92\",\"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3\"]},\"@openzeppelin/contracts/utils/Strings.sol\":{\"keccak256\":\"0x32c202bd28995dd20c4347b7c6467a6d3241c74c8ad3edcbb610cd9205916c45\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8179c356adb19e70d6b31a1eedc8c5c7f0c00e669e2540f4099e3844c6074d30\",\"dweb:/ipfs/QmWFbivarEobbqhS1go64ootVuHfVohBseerYy9FTEd1W2\"]},\"@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0xd10975de010d89fd1c78dc5e8a9a7e7f496198085c151648f20cba166b32582b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fb0048dee081f6fffa5f74afc3fb328483c2a30504e94a0ddd2a5114d731ec4d\",\"dweb:/ipfs/QmZptt1nmYoA5SgjwnSgWqgUSDgm4q52Yos3xhnMv3MV43\"]},\"@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f\",\"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy\"]},\"project:/contracts/utils/MfiAccessControl.sol\":{\"keccak256\":\"0x75b96fbf152fa4e14d1616f55e4c805abc4d5def327e779a26c1be8ac3751b35\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://dad2e27cf66f4a4d813fc7a658dcc66a3067456c0867d835cc3051ff6112ed2b\",\"dweb:/ipfs/QmZNJ11K5NSc5XN7ZeCrTySrMNDjA1eEGPkLLHCAyQRj1m\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -266,57 +292,56 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.6;\n\nimport \"@openzeppelin/contracts/access/AccessControl.sol\";\n\n\nabstract contract MfiAccessControl is AccessControl {\n\n    // money administrator\n    bytes32 public constant MONEY_ADMINISTRATOR = bytes32(\"MFI_Money_Administrator\");\n\n    // data administrator\n    bytes32 public constant DATA_ADMINISTRATOR = bytes32(\"MFI_Data_Administrator\");\n\n    // project administrator\n    bytes32 public constant PROJECT_ADMINISTRATOR = bytes32(\"MFI_Project_Administrator\");\n\n    // update administrator\n    bytes32 public constant UPDATE_ADMINISTRATOR = bytes32(\"MFI_Update_Administrator\");\n\n\n}\n",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.6;\n\nimport \"@openzeppelin/contracts/access/AccessControl.sol\";\n\n\nabstract contract MfiAccessControl is AccessControl {\n\n    uint256 public proportion;\n\n    uint256 public constant MAX = ~uint256(0);\n\n    // money administrator\n    bytes32 public constant MONEY_ADMINISTRATOR = bytes32(keccak256(abi.encodePacked(\"MFI_Money_Administrator\")));\n\n    // data administrator\n    bytes32 public constant DATA_ADMINISTRATOR = bytes32(keccak256(abi.encodePacked(\"MFI_Data_Administrator\")));\n\n    // project administrator\n    bytes32 public constant PROJECT_ADMINISTRATOR = bytes32(keccak256(abi.encodePacked(\"MFI_Project_Administrator\")));\n\n    // meta finance trigger pool address\n    bytes32 public constant META_FINANCE_TRIGGER_POOL = bytes32(keccak256(abi.encodePacked(\"META_FINANCE_TRIGGER_POOL\")));\n\n\n}\n",
   "sourcePath": "/Users/blockinsight/Desktop/myCode/solidity/MFITriggerPool/contracts/utils/MfiAccessControl.sol",
   "ast": {
     "absolutePath": "project:/contracts/utils/MfiAccessControl.sol",
     "exportedSymbols": {
       "AccessControl": [
-        308
+        752
       ],
       "Context": [
-        2005
+        1469
       ],
       "ERC165": [
-        2292
+        1696
       ],
       "IAccessControl": [
-        381
+        825
       ],
       "IERC165": [
-        2304
+        1708
       ],
       "MfiAccessControl": [
-        9957
+        8933
       ],
       "Strings": [
-        2268
+        1672
       ]
     },
-    "id": 9958,
+    "id": 8934,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 9929,
+        "id": 8876,
         "literals": [
           "solidity",
-          "^",
           "0.8",
           ".6"
         ],
         "nodeType": "PragmaDirective",
-        "src": "32:23:76"
+        "src": "32:22:374"
       },
       {
         "absolutePath": "@openzeppelin/contracts/access/AccessControl.sol",
         "file": "@openzeppelin/contracts/access/AccessControl.sol",
-        "id": 9930,
+        "id": 8877,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 9958,
-        "sourceUnit": 309,
-        "src": "57:58:76",
+        "scope": 8934,
+        "sourceUnit": 753,
+        "src": "56:58:374",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -325,44 +350,174 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 9931,
+              "id": 8878,
               "name": "AccessControl",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 308,
-              "src": "156:13:76"
+              "referencedDeclaration": 752,
+              "src": "155:13:374"
             },
-            "id": 9932,
+            "id": 8879,
             "nodeType": "InheritanceSpecifier",
-            "src": "156:13:76"
+            "src": "155:13:374"
           }
         ],
-        "canonicalName": "MfiAccessControl",
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 9957,
+        "id": 8933,
         "linearizedBaseContracts": [
-          9957,
-          308,
-          2292,
-          2304,
-          381,
-          2005
+          8933,
+          752,
+          1696,
+          1708,
+          825,
+          1469
         ],
         "name": "MfiAccessControl",
-        "nameLocation": "136:16:76",
+        "nameLocation": "135:16:374",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
+            "constant": false,
+            "functionSelector": "5b4246d4",
+            "id": 8881,
+            "mutability": "mutable",
+            "name": "proportion",
+            "nameLocation": "191:10:374",
+            "nodeType": "VariableDeclaration",
+            "scope": 8933,
+            "src": "176:25:374",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 8880,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "176:7:374",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": true,
+            "functionSelector": "d49d5181",
+            "id": 8888,
+            "mutability": "constant",
+            "name": "MAX",
+            "nameLocation": "232:3:374",
+            "nodeType": "VariableDeclaration",
+            "scope": 8933,
+            "src": "208:41:374",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 8882,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "208:7:374",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "id": 8887,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "lValueRequested": false,
+              "nodeType": "UnaryOperation",
+              "operator": "~",
+              "prefix": true,
+              "src": "238:11:374",
+              "subExpression": {
+                "arguments": [
+                  {
+                    "hexValue": "30",
+                    "id": 8885,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "247:1:374",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_rational_0_by_1",
+                      "typeString": "int_const 0"
+                    },
+                    "value": "0"
+                  }
+                ],
+                "expression": {
+                  "argumentTypes": [
+                    {
+                      "typeIdentifier": "t_rational_0_by_1",
+                      "typeString": "int_const 0"
+                    }
+                  ],
+                  "id": 8884,
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "lValueRequested": false,
+                  "nodeType": "ElementaryTypeNameExpression",
+                  "src": "239:7:374",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_uint256_$",
+                    "typeString": "type(uint256)"
+                  },
+                  "typeName": {
+                    "id": 8883,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "239:7:374",
+                    "typeDescriptions": {}
+                  }
+                },
+                "id": 8886,
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": true,
+                "kind": "typeConversion",
+                "lValueRequested": false,
+                "names": [],
+                "nodeType": "FunctionCall",
+                "src": "239:10:374",
+                "tryCall": false,
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                }
+              },
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "public"
+          },
+          {
             "constant": true,
             "functionSelector": "1e00887d",
-            "id": 9938,
+            "id": 8899,
             "mutability": "constant",
             "name": "MONEY_ADMINISTRATOR",
-            "nameLocation": "228:19:76",
+            "nameLocation": "307:19:374",
             "nodeType": "VariableDeclaration",
-            "scope": 9957,
-            "src": "204:80:76",
+            "scope": 8933,
+            "src": "283:109:374",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -370,10 +525,10 @@
               "typeString": "bytes32"
             },
             "typeName": {
-              "id": 9933,
+              "id": 8889,
               "name": "bytes32",
               "nodeType": "ElementaryTypeName",
-              "src": "204:7:76",
+              "src": "283:7:374",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
                 "typeString": "bytes32"
@@ -382,49 +537,135 @@
             "value": {
               "arguments": [
                 {
-                  "hexValue": "4d46495f4d6f6e65795f41646d696e6973747261746f72",
-                  "id": 9936,
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "hexValue": "4d46495f4d6f6e65795f41646d696e6973747261746f72",
+                          "id": 8895,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "string",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "364:25:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_stringliteral_1043189db5aea389eebf939b751263fb3f7378a8da9203eb53debbcb2372ad5e",
+                            "typeString": "literal_string \"MFI_Money_Administrator\""
+                          },
+                          "value": "MFI_Money_Administrator"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_stringliteral_1043189db5aea389eebf939b751263fb3f7378a8da9203eb53debbcb2372ad5e",
+                            "typeString": "literal_string \"MFI_Money_Administrator\""
+                          }
+                        ],
+                        "expression": {
+                          "id": 8893,
+                          "name": "abi",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4294967295,
+                          "src": "347:3:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_abi",
+                            "typeString": "abi"
+                          }
+                        },
+                        "id": 8894,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "encodePacked",
+                        "nodeType": "MemberAccess",
+                        "src": "347:16:374",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_abiencodepacked_pure$__$returns$_t_bytes_memory_ptr_$",
+                          "typeString": "function () pure returns (bytes memory)"
+                        }
+                      },
+                      "id": 8896,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "347:43:374",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    }
+                  ],
+                  "expression": {
+                    "argumentTypes": [
+                      {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    ],
+                    "id": 8892,
+                    "name": "keccak256",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4294967288,
+                    "src": "337:9:374",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                      "typeString": "function (bytes memory) pure returns (bytes32)"
+                    }
+                  },
+                  "id": 8897,
                   "isConstant": false,
                   "isLValue": false,
                   "isPure": true,
-                  "kind": "string",
+                  "kind": "functionCall",
                   "lValueRequested": false,
-                  "nodeType": "Literal",
-                  "src": "258:25:76",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "src": "337:54:374",
+                  "tryCall": false,
                   "typeDescriptions": {
-                    "typeIdentifier": "t_stringliteral_1043189db5aea389eebf939b751263fb3f7378a8da9203eb53debbcb2372ad5e",
-                    "typeString": "literal_string \"MFI_Money_Administrator\""
-                  },
-                  "value": "MFI_Money_Administrator"
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
                 }
               ],
               "expression": {
                 "argumentTypes": [
                   {
-                    "typeIdentifier": "t_stringliteral_1043189db5aea389eebf939b751263fb3f7378a8da9203eb53debbcb2372ad5e",
-                    "typeString": "literal_string \"MFI_Money_Administrator\""
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
                   }
                 ],
-                "id": 9935,
+                "id": 8891,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
                 "lValueRequested": false,
                 "nodeType": "ElementaryTypeNameExpression",
-                "src": "250:7:76",
+                "src": "329:7:374",
                 "typeDescriptions": {
                   "typeIdentifier": "t_type$_t_bytes32_$",
                   "typeString": "type(bytes32)"
                 },
                 "typeName": {
-                  "id": 9934,
+                  "id": 8890,
                   "name": "bytes32",
                   "nodeType": "ElementaryTypeName",
-                  "src": "250:7:76",
+                  "src": "329:7:374",
                   "typeDescriptions": {}
                 }
               },
-              "id": 9937,
+              "id": 8898,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -432,7 +673,7 @@
               "lValueRequested": false,
               "names": [],
               "nodeType": "FunctionCall",
-              "src": "250:34:76",
+              "src": "329:63:374",
               "tryCall": false,
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
@@ -444,13 +685,13 @@
           {
             "constant": true,
             "functionSelector": "2edcb16e",
-            "id": 9944,
+            "id": 8910,
             "mutability": "constant",
             "name": "DATA_ADMINISTRATOR",
-            "nameLocation": "341:18:76",
+            "nameLocation": "449:18:374",
             "nodeType": "VariableDeclaration",
-            "scope": 9957,
-            "src": "317:78:76",
+            "scope": 8933,
+            "src": "425:107:374",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -458,10 +699,10 @@
               "typeString": "bytes32"
             },
             "typeName": {
-              "id": 9939,
+              "id": 8900,
               "name": "bytes32",
               "nodeType": "ElementaryTypeName",
-              "src": "317:7:76",
+              "src": "425:7:374",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
                 "typeString": "bytes32"
@@ -470,49 +711,135 @@
             "value": {
               "arguments": [
                 {
-                  "hexValue": "4d46495f446174615f41646d696e6973747261746f72",
-                  "id": 9942,
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "hexValue": "4d46495f446174615f41646d696e6973747261746f72",
+                          "id": 8906,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "string",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "505:24:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_stringliteral_a03698bc87021cfc9ab59f257f557b8ca5aab32ec4f7c14b3c904603ae874500",
+                            "typeString": "literal_string \"MFI_Data_Administrator\""
+                          },
+                          "value": "MFI_Data_Administrator"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_stringliteral_a03698bc87021cfc9ab59f257f557b8ca5aab32ec4f7c14b3c904603ae874500",
+                            "typeString": "literal_string \"MFI_Data_Administrator\""
+                          }
+                        ],
+                        "expression": {
+                          "id": 8904,
+                          "name": "abi",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4294967295,
+                          "src": "488:3:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_abi",
+                            "typeString": "abi"
+                          }
+                        },
+                        "id": 8905,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "encodePacked",
+                        "nodeType": "MemberAccess",
+                        "src": "488:16:374",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_abiencodepacked_pure$__$returns$_t_bytes_memory_ptr_$",
+                          "typeString": "function () pure returns (bytes memory)"
+                        }
+                      },
+                      "id": 8907,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "488:42:374",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    }
+                  ],
+                  "expression": {
+                    "argumentTypes": [
+                      {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    ],
+                    "id": 8903,
+                    "name": "keccak256",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4294967288,
+                    "src": "478:9:374",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                      "typeString": "function (bytes memory) pure returns (bytes32)"
+                    }
+                  },
+                  "id": 8908,
                   "isConstant": false,
                   "isLValue": false,
                   "isPure": true,
-                  "kind": "string",
+                  "kind": "functionCall",
                   "lValueRequested": false,
-                  "nodeType": "Literal",
-                  "src": "370:24:76",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "src": "478:53:374",
+                  "tryCall": false,
                   "typeDescriptions": {
-                    "typeIdentifier": "t_stringliteral_a03698bc87021cfc9ab59f257f557b8ca5aab32ec4f7c14b3c904603ae874500",
-                    "typeString": "literal_string \"MFI_Data_Administrator\""
-                  },
-                  "value": "MFI_Data_Administrator"
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
                 }
               ],
               "expression": {
                 "argumentTypes": [
                   {
-                    "typeIdentifier": "t_stringliteral_a03698bc87021cfc9ab59f257f557b8ca5aab32ec4f7c14b3c904603ae874500",
-                    "typeString": "literal_string \"MFI_Data_Administrator\""
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
                   }
                 ],
-                "id": 9941,
+                "id": 8902,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
                 "lValueRequested": false,
                 "nodeType": "ElementaryTypeNameExpression",
-                "src": "362:7:76",
+                "src": "470:7:374",
                 "typeDescriptions": {
                   "typeIdentifier": "t_type$_t_bytes32_$",
                   "typeString": "type(bytes32)"
                 },
                 "typeName": {
-                  "id": 9940,
+                  "id": 8901,
                   "name": "bytes32",
                   "nodeType": "ElementaryTypeName",
-                  "src": "362:7:76",
+                  "src": "470:7:374",
                   "typeDescriptions": {}
                 }
               },
-              "id": 9943,
+              "id": 8909,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -520,7 +847,7 @@
               "lValueRequested": false,
               "names": [],
               "nodeType": "FunctionCall",
-              "src": "362:33:76",
+              "src": "470:62:374",
               "tryCall": false,
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
@@ -532,13 +859,13 @@
           {
             "constant": true,
             "functionSelector": "bd0dd4b2",
-            "id": 9950,
+            "id": 8921,
             "mutability": "constant",
             "name": "PROJECT_ADMINISTRATOR",
-            "nameLocation": "455:21:76",
+            "nameLocation": "592:21:374",
             "nodeType": "VariableDeclaration",
-            "scope": 9957,
-            "src": "431:84:76",
+            "scope": 8933,
+            "src": "568:113:374",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -546,10 +873,10 @@
               "typeString": "bytes32"
             },
             "typeName": {
-              "id": 9945,
+              "id": 8911,
               "name": "bytes32",
               "nodeType": "ElementaryTypeName",
-              "src": "431:7:76",
+              "src": "568:7:374",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
                 "typeString": "bytes32"
@@ -558,49 +885,135 @@
             "value": {
               "arguments": [
                 {
-                  "hexValue": "4d46495f50726f6a6563745f41646d696e6973747261746f72",
-                  "id": 9948,
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "hexValue": "4d46495f50726f6a6563745f41646d696e6973747261746f72",
+                          "id": 8917,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "string",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "651:27:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_stringliteral_736b93598a283c5ccdd7afb6d48100c95a20ca4ee20e0381c29fb0f039933197",
+                            "typeString": "literal_string \"MFI_Project_Administrator\""
+                          },
+                          "value": "MFI_Project_Administrator"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_stringliteral_736b93598a283c5ccdd7afb6d48100c95a20ca4ee20e0381c29fb0f039933197",
+                            "typeString": "literal_string \"MFI_Project_Administrator\""
+                          }
+                        ],
+                        "expression": {
+                          "id": 8915,
+                          "name": "abi",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4294967295,
+                          "src": "634:3:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_abi",
+                            "typeString": "abi"
+                          }
+                        },
+                        "id": 8916,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "encodePacked",
+                        "nodeType": "MemberAccess",
+                        "src": "634:16:374",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_abiencodepacked_pure$__$returns$_t_bytes_memory_ptr_$",
+                          "typeString": "function () pure returns (bytes memory)"
+                        }
+                      },
+                      "id": 8918,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "634:45:374",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    }
+                  ],
+                  "expression": {
+                    "argumentTypes": [
+                      {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    ],
+                    "id": 8914,
+                    "name": "keccak256",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4294967288,
+                    "src": "624:9:374",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                      "typeString": "function (bytes memory) pure returns (bytes32)"
+                    }
+                  },
+                  "id": 8919,
                   "isConstant": false,
                   "isLValue": false,
                   "isPure": true,
-                  "kind": "string",
+                  "kind": "functionCall",
                   "lValueRequested": false,
-                  "nodeType": "Literal",
-                  "src": "487:27:76",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "src": "624:56:374",
+                  "tryCall": false,
                   "typeDescriptions": {
-                    "typeIdentifier": "t_stringliteral_736b93598a283c5ccdd7afb6d48100c95a20ca4ee20e0381c29fb0f039933197",
-                    "typeString": "literal_string \"MFI_Project_Administrator\""
-                  },
-                  "value": "MFI_Project_Administrator"
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
                 }
               ],
               "expression": {
                 "argumentTypes": [
                   {
-                    "typeIdentifier": "t_stringliteral_736b93598a283c5ccdd7afb6d48100c95a20ca4ee20e0381c29fb0f039933197",
-                    "typeString": "literal_string \"MFI_Project_Administrator\""
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
                   }
                 ],
-                "id": 9947,
+                "id": 8913,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
                 "lValueRequested": false,
                 "nodeType": "ElementaryTypeNameExpression",
-                "src": "479:7:76",
+                "src": "616:7:374",
                 "typeDescriptions": {
                   "typeIdentifier": "t_type$_t_bytes32_$",
                   "typeString": "type(bytes32)"
                 },
                 "typeName": {
-                  "id": 9946,
+                  "id": 8912,
                   "name": "bytes32",
                   "nodeType": "ElementaryTypeName",
-                  "src": "479:7:76",
+                  "src": "616:7:374",
                   "typeDescriptions": {}
                 }
               },
-              "id": 9949,
+              "id": 8920,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -608,7 +1021,7 @@
               "lValueRequested": false,
               "names": [],
               "nodeType": "FunctionCall",
-              "src": "479:36:76",
+              "src": "616:65:374",
               "tryCall": false,
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
@@ -619,14 +1032,14 @@
           },
           {
             "constant": true,
-            "functionSelector": "472ea1ed",
-            "id": 9956,
+            "functionSelector": "b9a503cd",
+            "id": 8932,
             "mutability": "constant",
-            "name": "UPDATE_ADMINISTRATOR",
-            "nameLocation": "574:20:76",
+            "name": "META_FINANCE_TRIGGER_POOL",
+            "nameLocation": "753:25:374",
             "nodeType": "VariableDeclaration",
-            "scope": 9957,
-            "src": "550:82:76",
+            "scope": 8933,
+            "src": "729:117:374",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -634,10 +1047,10 @@
               "typeString": "bytes32"
             },
             "typeName": {
-              "id": 9951,
+              "id": 8922,
               "name": "bytes32",
               "nodeType": "ElementaryTypeName",
-              "src": "550:7:76",
+              "src": "729:7:374",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
                 "typeString": "bytes32"
@@ -646,49 +1059,135 @@
             "value": {
               "arguments": [
                 {
-                  "hexValue": "4d46495f5570646174655f41646d696e6973747261746f72",
-                  "id": 9954,
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "hexValue": "4d4554415f46494e414e43455f545249474745525f504f4f4c",
+                          "id": 8928,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "string",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "816:27:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_stringliteral_c3ec9d7845cb4452dd283f181d1ac98a1b972fc0aeb4757e35420bfc1a26f73a",
+                            "typeString": "literal_string \"META_FINANCE_TRIGGER_POOL\""
+                          },
+                          "value": "META_FINANCE_TRIGGER_POOL"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_stringliteral_c3ec9d7845cb4452dd283f181d1ac98a1b972fc0aeb4757e35420bfc1a26f73a",
+                            "typeString": "literal_string \"META_FINANCE_TRIGGER_POOL\""
+                          }
+                        ],
+                        "expression": {
+                          "id": 8926,
+                          "name": "abi",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4294967295,
+                          "src": "799:3:374",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_abi",
+                            "typeString": "abi"
+                          }
+                        },
+                        "id": 8927,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "encodePacked",
+                        "nodeType": "MemberAccess",
+                        "src": "799:16:374",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_abiencodepacked_pure$__$returns$_t_bytes_memory_ptr_$",
+                          "typeString": "function () pure returns (bytes memory)"
+                        }
+                      },
+                      "id": 8929,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "799:45:374",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    }
+                  ],
+                  "expression": {
+                    "argumentTypes": [
+                      {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes memory"
+                      }
+                    ],
+                    "id": 8925,
+                    "name": "keccak256",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4294967288,
+                    "src": "789:9:374",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                      "typeString": "function (bytes memory) pure returns (bytes32)"
+                    }
+                  },
+                  "id": 8930,
                   "isConstant": false,
                   "isLValue": false,
                   "isPure": true,
-                  "kind": "string",
+                  "kind": "functionCall",
                   "lValueRequested": false,
-                  "nodeType": "Literal",
-                  "src": "605:26:76",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "src": "789:56:374",
+                  "tryCall": false,
                   "typeDescriptions": {
-                    "typeIdentifier": "t_stringliteral_0d092806eb19f7ba0c964e315ded006383ecbf383c546176dfa5869ab9e058a7",
-                    "typeString": "literal_string \"MFI_Update_Administrator\""
-                  },
-                  "value": "MFI_Update_Administrator"
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
                 }
               ],
               "expression": {
                 "argumentTypes": [
                   {
-                    "typeIdentifier": "t_stringliteral_0d092806eb19f7ba0c964e315ded006383ecbf383c546176dfa5869ab9e058a7",
-                    "typeString": "literal_string \"MFI_Update_Administrator\""
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
                   }
                 ],
-                "id": 9953,
+                "id": 8924,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
                 "lValueRequested": false,
                 "nodeType": "ElementaryTypeNameExpression",
-                "src": "597:7:76",
+                "src": "781:7:374",
                 "typeDescriptions": {
                   "typeIdentifier": "t_type$_t_bytes32_$",
                   "typeString": "type(bytes32)"
                 },
                 "typeName": {
-                  "id": 9952,
+                  "id": 8923,
                   "name": "bytes32",
                   "nodeType": "ElementaryTypeName",
-                  "src": "597:7:76",
+                  "src": "781:7:374",
                   "typeDescriptions": {}
                 }
               },
-              "id": 9955,
+              "id": 8931,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -696,7 +1195,7 @@
               "lValueRequested": false,
               "names": [],
               "nodeType": "FunctionCall",
-              "src": "597:35:76",
+              "src": "781:65:374",
               "tryCall": false,
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
@@ -706,20 +1205,20 @@
             "visibility": "public"
           }
         ],
-        "scope": 9958,
-        "src": "118:519:76",
+        "scope": 8934,
+        "src": "117:734:374",
         "usedErrors": []
       }
     ],
-    "src": "32:606:76"
+    "src": "32:820:374"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+    "version": "0.8.6+commit.11564f7e.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-05-12T01:36:41.055Z",
+  "updatedAt": "2022-05-20T03:14:47.748Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

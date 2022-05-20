@@ -27,9 +27,10 @@ contract MfiIssueEvents {
     /**
     * @dev User harvest event
     * @param _user User address
+    * @param _rewardsToken Rewards token address
     * @param _reward User harvest amount
     */
-    event UserHarvest(address indexed _user, uint256 _reward);
+    event UserHarvest(address indexed _user, address _rewardsToken, uint256 _reward);
 
     /**
     * @dev User receive reward event
@@ -42,9 +43,8 @@ contract MfiIssueEvents {
 
 // File: @openzeppelin/contracts/access/IAccessControl.sol
 
-   
-// OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)
 
+// OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)
 
 
 /**
@@ -133,9 +133,8 @@ interface IAccessControl {
 
 // File: @openzeppelin/contracts/utils/Context.sol
 
-   
-// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
+// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
 
 /**
@@ -160,9 +159,8 @@ abstract contract Context {
 
 // File: @openzeppelin/contracts/utils/Strings.sol
 
-   
-// OpenZeppelin Contracts v4.4.1 (utils/Strings.sol)
 
+// OpenZeppelin Contracts v4.4.1 (utils/Strings.sol)
 
 
 /**
@@ -230,9 +228,8 @@ library Strings {
 
 // File: @openzeppelin/contracts/utils/introspection/IERC165.sol
 
-   
-// OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
 
+// OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
 
 
 /**
@@ -258,9 +255,8 @@ interface IERC165 {
 
 // File: @openzeppelin/contracts/utils/introspection/ERC165.sol
 
-   
-// OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
 
+// OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
 
 
 /**
@@ -288,9 +284,8 @@ abstract contract ERC165 is IERC165 {
 
 // File: @openzeppelin/contracts/access/AccessControl.sol
 
-   
-// OpenZeppelin Contracts (last updated v4.5.0) (access/AccessControl.sol)
 
+// OpenZeppelin Contracts (last updated v4.5.0) (access/AccessControl.sol)
 
 
 
@@ -512,7 +507,6 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
 
 // File: contracts/utils/MfiAccessControl.sol
 
-   
 
 
 abstract contract MfiAccessControl is AccessControl {
@@ -538,7 +532,6 @@ abstract contract MfiAccessControl is AccessControl {
 
 // File: contracts/interfaces/MfiIssueInterfaces.sol
 
-   
 
 
 /**
@@ -579,9 +572,8 @@ interface IMetaFinanceClubInfo {
 
 // File: @openzeppelin/contracts/utils/math/Math.sol
 
-   
-// OpenZeppelin Contracts (last updated v4.5.0) (utils/math/Math.sol)
 
+// OpenZeppelin Contracts (last updated v4.5.0) (utils/math/Math.sol)
 
 
 /**
@@ -625,7 +617,7 @@ library Math {
 
 // File: @openzeppelin/contracts/utils/math/SafeMath.sol
 
-   
+
 // OpenZeppelin Contracts v4.4.1 (utils/math/SafeMath.sol)
 
 
@@ -854,7 +846,7 @@ library SafeMath {
 
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
 
-   
+
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/IERC20.sol)
 
 
@@ -938,7 +930,7 @@ interface IERC20 {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
-   
+
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
 
@@ -1162,7 +1154,7 @@ library Address {
 
 // File: @openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
-   
+
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/utils/SafeERC20.sol)
 
 
@@ -1261,7 +1253,7 @@ library SafeERC20 {
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
 
-   
+
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
 
@@ -1289,7 +1281,7 @@ interface IERC20Metadata is IERC20 {
 
 // File: @openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol
 
-   
+
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
 
@@ -1486,7 +1478,7 @@ library AddressUpgradeable {
 
 // File: @openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol
 
-   
+
 // OpenZeppelin Contracts (last updated v4.6.0) (proxy/utils/Initializable.sol)
 
 
@@ -1635,7 +1627,7 @@ abstract contract Initializable {
 
 // File: @openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol
 
-   
+
 // OpenZeppelin Contracts v4.4.1 (security/ReentrancyGuard.sol)
 
 
@@ -1711,7 +1703,7 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
 
 // File: contracts/storages/MfiIssueStorages.sol
 
-   
+
 
 
 
@@ -1750,7 +1742,7 @@ contract MfiIssueStorages {
 
 // File: contracts/MetaFinanceIssuePool.sol
 
-   
+
 
 
 
@@ -1820,8 +1812,9 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         userData_.lastTime = blockTimestamp;
         userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity.sub(generateQuantity));
         userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
+        received[_msgSender()] = received[_msgSender()].add(reward);
 
-        emit UserHarvest(_msgSender(), reward);
+        emit UserHarvest(_msgSender(), address(rewardsToken), reward);
     }
 
     /**
@@ -1836,7 +1829,6 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         block.timestamp >= userData[_msgSender()].enderTime ?
         userData[_msgSender()].pledgeTotal = 0 :
         userData[_msgSender()].pledgeTotal = (userData[_msgSender()].pledgeTotal.add(generateQuantity)).sub(reward);
-        received[_msgSender()] = received[_msgSender()].add(reward);
         rewardsToken.safeTransfer(_msgSender(), reward);
 
         emit RewardPaid(_msgSender(), reward);
@@ -1877,6 +1869,18 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
         UserPledge memory userData_ = userData[account_];
         if (userData_.startTime <= 0) return 0;
         return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
+    }
+
+
+    /**
+    * @dev User data
+    * @param userAddress_ User address
+    * @return User data
+    */
+    function issueUserData(address userAddress_) external view returns (uint256, uint256){
+        return
+        (earned(userAddress_),
+        received[userAddress_]);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

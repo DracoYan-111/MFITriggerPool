@@ -6,6 +6,9 @@ import "./storages/MfiClubStorages.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+/**
+* @notice MfiAccessControl, MfiClubStorages, Initializable
+*/
 contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable {
     using SafeMath for uint256;
 
