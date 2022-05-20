@@ -15,8 +15,7 @@ contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiA
     /* ========== CONSTRUCTOR ========== */
 
     function initialize(address _rewardsToken, address metaFinanceClubInfo_) initializer public {
-        lockDays = 30;
-        //180 days;
+        lockDays = 180 days;
         __ReentrancyGuard_init();
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         rewardsToken = IERC20Metadata(_rewardsToken);
