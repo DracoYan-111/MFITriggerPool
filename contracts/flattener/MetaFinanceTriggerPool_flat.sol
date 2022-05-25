@@ -524,7 +524,7 @@ contract MfiEvents {
 
 }
 
-// File: contracts/interfaces/MfiTriggerInterfaces.sol
+// File: contracts/interfaces/IMfiTriggerInterfaces.sol
 
 
 

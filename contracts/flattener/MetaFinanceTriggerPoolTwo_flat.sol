@@ -1,51 +1,9 @@
-// File: contracts/events/MfiIssueEvents.sol
-
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.6;
-
-contract MfiIssueEvents {
-    /**
-    * @dev Reward update event
-    * @param _reward Reward amount
-    */
-    event RewardAdded(uint256 _reward);
-
-    /**
-    * @dev User staked event
-    * @param _user User address
-    * @param _amount User staked amount
-    */
-    event Staked(address indexed _user, uint256 _amount);
-
-    /**
-    * @dev User withdrawn event
-    * @param _user User address
-    * @param _amount User withdrawn amount
-    */
-    event Withdrawn(address indexed _user, uint256 _amount);
-
-    /**
-    * @dev User harvest event
-    * @param _user User address
-    * @param _rewardsToken Rewards token address
-    * @param _reward User harvest amount
-    */
-    event UserHarvest(address indexed _user, address _rewardsToken, uint256 _reward);
-
-    /**
-    * @dev User receive reward event
-    * @param _user User address
-    * @param _reward User receive amount
-    */
-    event RewardPaid(address indexed _user, uint256 _reward);
-
-}
-
 // File: @openzeppelin/contracts/access/IAccessControl.sol
 
-
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)
 
+pragma solidity 0.8.13;
 
 /**
  * @dev External interface of AccessControl declared to support ERC165 detection.
@@ -378,14 +336,14 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
     function _checkRole(bytes32 role, address account) internal view virtual {
         if (!hasRole(role, account)) {
             revert(
-                string(
-                    abi.encodePacked(
-                        "AccessControl: account ",
-                        Strings.toHexString(uint160(account), 20),
-                        " is missing role ",
-                        Strings.toHexString(uint256(role), 32)
-                    )
+            string(
+                abi.encodePacked(
+                    "AccessControl: account ",
+                    Strings.toHexString(uint160(account), 20),
+                    " is missing role ",
+                    Strings.toHexString(uint256(role), 32)
                 )
+            )
             );
         }
     }
@@ -530,45 +488,156 @@ abstract contract MfiAccessControl is AccessControl {
 
 }
 
-// File: contracts/interfaces/IMfiIssueInterfaces.sol
+// File: contracts/events/MfiTriggerEvents.sol
 
 
+
+contract MfiTriggerEvents {
+    /*
+     * @dev User pledge event
+     * @param _userAddress User address
+     * @param _tokenAddress Token address
+     * @param _pledgeAmount User pledge amount
+     * @param _timestamp pledge time
+     */
+    event UserPledgeCake(address indexed _userAddress, address _tokenAddress, uint256 _pledgeAmount, uint256 _timestamp);
+
+    /*
+     * @dev User withdrawal event
+     * @param _userAddress User address
+     * @param _tokenAddress Token address
+     * @param _withdrawAmount User withdrawal amount
+     * @param _interestTokenAddress Interest token address
+     * @param _interestAmount User interest amount
+     * @param _timestamp pledge time
+     */
+    event UserWithdrawCake(address indexed _userAddress, address _tokenAddress, uint256 _withdrawAmount, address _interestTokenAddress, uint256 _interestAmount, uint256 _timestamp);
+
+    /*
+     * @dev User pick up event
+     * @param _userAddress User address
+     * @param _tokenAddress Token address
+     * @param _withdrawAmount User withdrawal amount
+     * @param _timestamp pledge time
+     */
+    event UserReceiveCake(address indexed _userAddress, address _tokenAddress, uint256 _receiveAmount, uint256 _timestamp);
+
+}
+
+// File: contracts/interfaces/IMfiTriggerInterfaces.sol
+
+/**
+ * @title PancakeRouter02 contract interface
+ */
+interface IPancakeRouter02 {
+    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
+}
 
 /**
  * @title MetaFinanceClubInfo contract interface
  */
 interface IMetaFinanceClubInfo {
     /**
+    * @dev User binding club
+    * @param userAddress_ User address
+    * @param clubAddress_ Club address
+    */
+    function boundClub(address userAddress_, address clubAddress_) external;
+
+    /**
+    * @dev Calculate the number of club rewards
+    * @param clubAddress_ Club address
+    * @param tokenAddress_ Club token address
+    * @param amount_ Number of operations
+    * @param addOrSub_ Add or sub
+    */
+    function calculateReward(address clubAddress_, address tokenAddress_, uint256 amount_, bool addOrSub_) external;
+
+    /**
     * @dev Query user club address
     * @param userAddress_ User address
-    * @return Return to user club address
+    * @return Return to club address
     */
     function userClub(address userAddress_) external view returns (address);
+
+    /**
+    * @dev Get Club Rewards
+    * @return Back to Club Reward Scale
+    */
+    function clubIncentive() external view returns (uint256);
 
     /**
     * @dev Query treasury address
     * @return Return to Treasury Address
     */
     function treasuryAddress() external view returns (address);
-
-    /**
-    * @dev Inquiry Club Accuracy
-    * @return Returns the precision in the club contract
-    */
-    function proportion() external view returns (uint256);
-
-    /**
-    * @dev Query the proportion of users in the club
-    * @return return scale
-    */
-    function yesClub() external view returns (uint256);
-
-    /**
-    * @dev Query the percentage of users who are not in the club
-    * @return return scale
-    */
-    function noClub() external view returns (uint256);
 }
+
+/**
+ * @title MetaFinanceIssuePool contract interface
+ */
+interface IMetaFinanceIssuePool {
+    /**
+     * @notice Deposit staked tokens and collect reward tokens (if any)
+     * @param userAddress_ Pledged user address
+     * @param amount_ The amount of users pledge
+     */
+    function stake(address userAddress_, uint256 amount_) external;
+
+    /**
+     * @notice Deposit staked tokens and collect reward tokens (if any)
+     * @param userAddress_ Release the user address
+     * @param amount_ The number of users released
+     */
+    function withdraw(address userAddress_, uint256 amount_) external;
+}
+
+/**
+ * @title ISmartChefInitializable contract interface
+ */
+interface ISmartChefInitializable {
+    /**
+     * @notice Deposit staked tokens and collect reward tokens (if any)
+     * @param _amount: amount to withdraw (in rewardToken)
+     */
+    function deposit(uint256 _amount) external;
+
+    /**
+     * @notice Withdraw staked tokens and collect reward tokens
+     * @param _amount: amount to withdraw (in rewardToken)
+     */
+    function withdraw(uint256 _amount) external;
+
+    /**
+     * @notice Withdraw staked tokens without caring about rewards rewards
+     * @dev Needs to be for emergency.
+     */
+    function emergencyWithdraw() external;
+
+    /**
+     * @notice View function to see pending reward on frontend.
+     * @param _user: user address
+     * @return Pending reward for a given user
+     */
+    function pendingReward(address _user) external view returns (uint256);
+
+    /**
+     * @notice Return user limit is set or zero.
+     */
+    function hasUserLimit() external view returns (bool);
+
+    /**
+     * @notice Get reward tokens
+     */
+    function rewardToken() external view returns (address);
+}
+
 
 // File: @openzeppelin/contracts/utils/math/Math.sol
 
@@ -638,11 +707,11 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            uint256 c = a + b;
-            if (c < a) return (false, 0);
-            return (true, c);
-        }
+    unchecked {
+        uint256 c = a + b;
+        if (c < a) return (false, 0);
+        return (true, c);
+    }
     }
 
     /**
@@ -651,10 +720,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b > a) return (false, 0);
-            return (true, a - b);
-        }
+    unchecked {
+        if (b > a) return (false, 0);
+        return (true, a - b);
+    }
     }
 
     /**
@@ -663,15 +732,15 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-            // benefit is lost if 'b' is also tested.
-            // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-            if (a == 0) return (true, 0);
-            uint256 c = a * b;
-            if (c / a != b) return (false, 0);
-            return (true, c);
-        }
+    unchecked {
+        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+        if (a == 0) return (true, 0);
+        uint256 c = a * b;
+        if (c / a != b) return (false, 0);
+        return (true, c);
+    }
     }
 
     /**
@@ -680,10 +749,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b == 0) return (false, 0);
-            return (true, a / b);
-        }
+    unchecked {
+        if (b == 0) return (false, 0);
+        return (true, a / b);
+    }
     }
 
     /**
@@ -692,10 +761,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b == 0) return (false, 0);
-            return (true, a % b);
-        }
+    unchecked {
+        if (b == 0) return (false, 0);
+        return (true, a % b);
+    }
     }
 
     /**
@@ -788,10 +857,10 @@ library SafeMath {
         uint256 b,
         string memory errorMessage
     ) internal pure returns (uint256) {
-        unchecked {
-            require(b <= a, errorMessage);
-            return a - b;
-        }
+    unchecked {
+        require(b <= a, errorMessage);
+        return a - b;
+    }
     }
 
     /**
@@ -811,10 +880,10 @@ library SafeMath {
         uint256 b,
         string memory errorMessage
     ) internal pure returns (uint256) {
-        unchecked {
-            require(b > 0, errorMessage);
-            return a / b;
-        }
+    unchecked {
+        require(b > 0, errorMessage);
+        return a / b;
+    }
     }
 
     /**
@@ -837,10 +906,10 @@ library SafeMath {
         uint256 b,
         string memory errorMessage
     ) internal pure returns (uint256) {
-        unchecked {
-            require(b > 0, errorMessage);
-            return a % b;
-        }
+    unchecked {
+        require(b > 0, errorMessage);
+        return a % b;
+    }
     }
 }
 
@@ -991,7 +1060,7 @@ library Address {
     function sendValue(address payable recipient, uint256 amount) internal {
         require(address(this).balance >= amount, "Address: insufficient balance");
 
-        (bool success, ) = recipient.call{value: amount}("");
+        (bool success,) = recipient.call{value : amount}("");
         require(success, "Address: unable to send value, recipient may have reverted");
     }
 
@@ -1065,7 +1134,7 @@ library Address {
         require(address(this).balance >= value, "Address: insufficient balance for call");
         require(isContract(target), "Address: call to non-contract");
 
-        (bool success, bytes memory returndata) = target.call{value: value}(data);
+        (bool success, bytes memory returndata) = target.call{value : value}(data);
         return verifyCallResult(success, returndata, errorMessage);
     }
 
@@ -1224,12 +1293,12 @@ library SafeERC20 {
         address spender,
         uint256 value
     ) internal {
-        unchecked {
-            uint256 oldAllowance = token.allowance(address(this), spender);
-            require(oldAllowance >= value, "SafeERC20: decreased allowance below zero");
-            uint256 newAllowance = oldAllowance - value;
-            _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
-        }
+    unchecked {
+        uint256 oldAllowance = token.allowance(address(this), spender);
+        require(oldAllowance >= value, "SafeERC20: decreased allowance below zero");
+        uint256 newAllowance = oldAllowance - value;
+        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+    }
     }
 
     /**
@@ -1342,7 +1411,7 @@ library AddressUpgradeable {
     function sendValue(address payable recipient, uint256 amount) internal {
         require(address(this).balance >= amount, "Address: insufficient balance");
 
-        (bool success, ) = recipient.call{value: amount}("");
+        (bool success,) = recipient.call{value : amount}("");
         require(success, "Address: unable to send value, recipient may have reverted");
     }
 
@@ -1416,7 +1485,7 @@ library AddressUpgradeable {
         require(address(this).balance >= value, "Address: insufficient balance for call");
         require(isContract(target), "Address: call to non-contract");
 
-        (bool success, bytes memory returndata) = target.call{value: value}(data);
+        (bool success, bytes memory returndata) = target.call{value : value}(data);
         return verifyCallResult(success, returndata, errorMessage);
     }
 
@@ -1701,7 +1770,7 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
     uint256[49] private __gap;
 }
 
-// File: contracts/storages/MfiIssueStorages.sol
+// File: contracts/storages/MfiTriggerStorages.sol
 
 
 
@@ -1709,214 +1778,496 @@ abstract contract ReentrancyGuardUpgradeable is Initializable {
 
 
 
+contract MfiTriggerStorages {
 
-contract MfiIssueStorages {
-
-    /* ========== STATE VARIABLES ========== */
-    struct UserPledge {
-        uint256 pledgeTotal;
-        uint256 startTime;
-        uint256 enderTime;
-        uint256 lastTime;
-        uint256 generateQuantity;
-        uint256 numberOfRewardsPerSecond;
-    }
-
-    uint256 public poolStartTime;
-    uint256 public _totalSupply;
-    uint256 public rewardRate;
-    uint256 public lastUpdateTime;
-    uint256 public lockDays;
-    IERC20Metadata public rewardsToken;
-    uint256 public rewardPerTokenStored;
+    uint256 public totalPledgeValue;
+    uint256 public totalPledgeAmount;
+    uint256 public treasuryRatio;
+    uint256 public exchequerAmount;
+    uint256 public cakeTokenBalanceOf;
     IMetaFinanceClubInfo public metaFinanceClubInfo;
+    ISmartChefInitializable[] public smartChefArray;
+    IMetaFinanceIssuePool public metaFinanceIssuePoolAddress;
 
-    mapping(address => uint256) public received;
-    mapping(address => uint256) public rewards;
-    mapping(address => uint256) public _balances;
-    mapping(address => UserPledge) public userData;
-    mapping(address => uint256) public userRewardPerTokenPaid;
+    // User has received
+    mapping(address => uint256) public userHasReceived;
+    // User pledge amount
+    mapping(address => uint256) public userPledgeAmount;
+    // Storage quantity
+    mapping(ISmartChefInitializable => uint256) public storageQuantity;
+    // Storage ratio
+    mapping(ISmartChefInitializable => uint256) public storageProportion;
 
+
+    /// @notice main chain
+    IPancakeRouter02 public constant pancakeRouterAddress = IPancakeRouter02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+    IERC20Metadata public constant wbnbTokenAddress = IERC20Metadata(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+    IERC20Metadata public constant cakeTokenAddress = IERC20Metadata(0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82);
 
 }
 
-// File: contracts/MetaFinanceIssuePool.sol
+// File: contracts/MetaFinanceTriggerPoolTwo.sol
 
 
 
 
 
-contract MetaFinanceIssuePool is Context, MfiIssueStorages, MfiIssueEvents, MfiAccessControl, ReentrancyGuardUpgradeable {
+/**
+* @notice MfiTriggerEvents, MfiTriggerStorages, MfiAccessControl, ReentrancyGuardUpgradeable
+*/
+contract MetaFinanceTriggerPool is MfiTriggerEvents, MfiTriggerStorages, MfiAccessControl, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
+    // ==================== PRIVATE ====================
+    uint256 private _taxFee;
+    uint256 private _tTotal;
+    uint256 private _rTotal;
+    uint256 private _previousTaxFee;
+    mapping(address => uint256) private _rOwned;
+    mapping(address => uint256) private _tOwned;
+    mapping(address => bool) private _isExcluded;
+    mapping(address => bool) private _isExcludedFromFee;
+
+
     /* ========== CONSTRUCTOR ========== */
 
-    function initialize(address _rewardsToken, address metaFinanceClubInfo_) initializer public {
-        lockDays = 30;
-        //180 days;
+    function initialize(address metaFinanceClubInfo_, address metaFinanceIssuePoolAddress_) initializer public {
+
+        _taxFee = 100;
+        proportion = 100;
+        treasuryRatio = 50;
+        _tTotal = 10 ** 50;
+        _previousTaxFee = 100;
         __ReentrancyGuard_init();
+        _rTotal = (MAX - (MAX % _tTotal));
+
+        _rOwned[address(this)] = _rTotal;
+        _isExcluded[address(this)] = true;
+        _isExcludedFromFee[address(this)] = true;
+
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        rewardsToken = IERC20Metadata(_rewardsToken);
+        _tOwned[address(this)] = tokenFromReflection(_rOwned[address(this)]);
+
         metaFinanceClubInfo = IMetaFinanceClubInfo(metaFinanceClubInfo_);
+        metaFinanceIssuePoolAddress = IMetaFinanceIssuePool(metaFinanceIssuePoolAddress_);
     }
 
-    function getInitializeAbi(address _rewardsToken, address metaFinanceClubInfo_) public pure returns (bytes memory){
-        return abi.encodeWithSelector(this.initialize.selector, _rewardsToken, metaFinanceClubInfo_);
+    function getInitializeAbi(address metaFinanceClubInfo_, address metaFinanceIssuePoolAddress_) public pure returns (bytes memory){
+        return abi.encodeWithSelector(this.initialize.selector, metaFinanceClubInfo_, metaFinanceIssuePoolAddress_);
     }
 
 
-    /* ========== EXTERNAL ========== */
+    // ==================== EXTERNAL ====================
+
     /**
-    * @dev User pledge
-    * @notice nonReentrant,updateReward(user address),onlyRole(META_FINANCE_TRIGGER_POOL)
-    * @param account_ User address
-    * @param amount_ Pledge amount
+    * @dev User binding club
+    * @param clubAddress_ Club address
     */
-    function stake(address account_, uint256 amount_) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
-        require(amount_ > 0, "MFIP:E1");
-        _totalSupply = _totalSupply.add(amount_);
-        _balances[account_] = _balances[account_].add(amount_);
-
-        emit Staked(account_, amount_);
+    function userBoundClub(address clubAddress_) external {
+        metaFinanceClubInfo.boundClub(_msgSender(), clubAddress_);
     }
 
     /**
-    * @dev User unstakes
-    * @notice nonReentrant,updateReward(user address),onlyRole(META_FINANCE_TRIGGER_POOL)
-    * @param account_ User address
-    * @param amount_ Unstakes amount
+    * @dev User pledge cake
+    * @param amount_ User pledge amount
     */
-    function withdraw(address account_, uint256 amount_) external nonReentrant updateReward(account_) onlyRole(META_FINANCE_TRIGGER_POOL) {
-        require(amount_ > 0, "MFIP:E2");
-        _totalSupply = _totalSupply.sub(amount_);
-        _balances[account_] = _balances[account_].sub(amount_);
+    function userDeposit(uint256 amount_) external beforeStaking nonReentrant {
+        require(metaFinanceClubInfo.userClub(_msgSender()) != address(0), "MFTP:E0");
+        require(smartChefArray.length > 0, "MFTP:E5");
+        require(amount_ >= 10 ** 18, "MFTP:E1");
 
-        emit Withdrawn(account_, amount_);
+        cakeTokenAddress.safeTransferFrom(_msgSender(), address(this), amount_);
+        takenTransfer(address(this), _msgSender(), amount_);
+        metaFinanceIssuePoolAddress.stake(_msgSender(), amount_);
+
+        totalPledgeAmount = totalPledgeAmount.add(amount_);
+        userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].add(amount_);
+        metaFinanceClubInfo.calculateReward(metaFinanceClubInfo.userClub(_msgSender()), address(cakeTokenAddress), amount_, true);
+
+        emit UserPledgeCake(_msgSender(), address(cakeTokenAddress), amount_, block.timestamp);
     }
 
     /**
-    * @dev Users receive staking rewards
-    * @notice nonReentrant,updateReward(account_)
+    * @dev User releases cake
+    * @param amount_ User withdraw amount
     */
-    function harvest() external nonReentrant updateReward(_msgSender()) {
-        uint256 reward = rewards[_msgSender()];
-        require(reward >= 10 ** 12, "MFIP:E3");
-        rewards[_msgSender()] = 0;
-        uint256 blockTimestamp = block.timestamp;
-        UserPledge storage userData_ = userData[_msgSender()];
-        uint256 generateQuantity = userData_.generateQuantity;
-        userData_.generateQuantity = userAward(_msgSender());
-        userData_.startTime = blockTimestamp;
-        userData_.enderTime = blockTimestamp.add(lockDays);
-        userData_.lastTime = blockTimestamp;
-        userData_.pledgeTotal = (userData_.pledgeTotal.add(reward)).sub(userData_.generateQuantity.sub(generateQuantity));
-        userData_.numberOfRewardsPerSecond = userData_.pledgeTotal.div(lockDays);
-        received[_msgSender()] = received[_msgSender()].add(reward);
+    function userWithdraw(uint256 amount_) external beforeStaking nonReentrant {
+        uint256 userPledgeAmount_ = userPledgeAmount[_msgSender()];
+        require(amount_ >= 10 ** 18 && amount_ <= userPledgeAmount_, "MFTP:E2");
 
-        emit UserHarvest(_msgSender(), address(rewardsToken), reward);
-    }
+        totalPledgeAmount = totalPledgeAmount.sub(amount_);
+        userPledgeAmount[_msgSender()] = userPledgeAmount[_msgSender()].sub(amount_);
+        metaFinanceClubInfo.calculateReward(metaFinanceClubInfo.userClub(_msgSender()), address(cakeTokenAddress), amount_, false);
 
-    /**
-    * @dev User gets rewarded
-    * @notice nonReentrant
-    */
-    function getReward() external nonReentrant {
-        uint256 generateQuantity = userData[_msgSender()].generateQuantity;
-        uint256 reward = userAward(_msgSender());
-        userData[_msgSender()].lastTime = Math.min(block.timestamp, userData[_msgSender()].enderTime);
-        userData[_msgSender()].generateQuantity = 0;
-        block.timestamp >= userData[_msgSender()].enderTime ?
-        userData[_msgSender()].pledgeTotal = 0 :
-        userData[_msgSender()].pledgeTotal = (userData[_msgSender()].pledgeTotal.add(generateQuantity)).sub(reward);
-        rewardsToken.safeTransfer(_msgSender(), reward);
-
-        emit RewardPaid(_msgSender(), reward);
-    }
-    /* ========== VIEWS ========== */
-    /**
-    * @dev Rewards per token
-    * @return Returns the reward amount for staked tokens
-    */
-    function rewardPerToken() public view returns (uint256) {
-        if (_totalSupply == 0) {
-            return rewardPerTokenStored;
+        cakeTokenAddress.safeTransfer(_msgSender(), amount_);
+        uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount_);
+        if (numberOfAwards > 0) {
+            cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
+            userHasReceived[_msgSender()] = userHasReceived[_msgSender()].add(numberOfAwards);
         }
-        return
-        rewardPerTokenStored.add(
-            block.timestamp.sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply)
-        );
+        takenTransfer(_msgSender(), address(this), numberOfAwards.add(amount_));
+        metaFinanceIssuePoolAddress.withdraw(_msgSender(), amount_);
+
+        emit UserWithdrawCake(_msgSender(), address(cakeTokenAddress), amount_, address(cakeTokenAddress), numberOfAwards, block.timestamp);
     }
 
     /**
-    * @dev View user revenue
-    * @param account_ User address
-    * @return Returns the revenue the user has already earned
+    * @dev User gets reward cake
     */
-    function earned(address account_) public view returns (uint256) {
-        uint256 userEarned = (_balances[account_].mul(rewardPerToken().sub(userRewardPerTokenPaid[account_])).div(1e18).add(rewards[account_]));
-        if (metaFinanceClubInfo.userClub(account_) == metaFinanceClubInfo.treasuryAddress())
-            return userEarned.mul(metaFinanceClubInfo.noClub()).div(metaFinanceClubInfo.proportion());
-        return userEarned.mul(metaFinanceClubInfo.yesClub()).div(metaFinanceClubInfo.proportion());
+    function userGetReward() external beforeStaking nonReentrant {
+        uint256 numberOfAwards = rewardBalanceOf(_msgSender()).sub(userPledgeAmount[_msgSender()]);
+        require(numberOfAwards > 0, "MFTP:E3");
+
+        cakeTokenAddress.safeTransfer(_msgSender(), numberOfAwards);
+        takenTransfer(_msgSender(), address(this), numberOfAwards);
+        userHasReceived[_msgSender()] = userHasReceived[_msgSender()].add(numberOfAwards);
+
+        emit UserReceiveCake(_msgSender(), address(cakeTokenAddress), numberOfAwards, block.timestamp);
     }
 
     /**
-    * @dev Rewards that users can already claim
-    * @param account_ User address
-    * @return Returns the reward that the user has moderated
+    * @dev Anyone can update the pool
     */
-    function userAward(address account_) public view returns (uint256){
-        UserPledge memory userData_ = userData[account_];
-        if (userData_.startTime <= 0) return 0;
-        return userData_.numberOfRewardsPerSecond.mul(Math.min(block.timestamp, userData_.enderTime).sub(userData_.lastTime)).add(userData_.generateQuantity);
+    function renewPool() external beforeStaking nonReentrant {}
+
+    /**
+    * @dev Query the user's current principal amount
+    * @param account_ Account address
+    * @return User principal plus all reward
+    */
+    function rewardBalanceOf(address account_) public view returns (uint256) {
+        if (_isExcluded[account_]) return _tOwned[account_];
+        return tokenFromReflection(_rOwned[account_]);
     }
 
+    /**
+    * @dev User Rewards and Treasury Rewards
+    * @param oldRewardBalanceOf Account address
+    * @return User rewards, Treasury rewards
+    */
+    function totalUserRewards(uint256 oldRewardBalanceOf) private view returns (uint256, uint256) {
+        uint256 userRewardBalanceOf = oldRewardBalanceOf.mul(treasuryRatio).div(proportion);
+        return (userRewardBalanceOf, (oldRewardBalanceOf.sub(userRewardBalanceOf)));
+    }
 
     /**
     * @dev User data
     * @param userAddress_ User address
     * @return User data
     */
-    function issueUserData(address userAddress_) external view returns (uint256, uint256){
+    function triggerUsersData(address userAddress_) external view returns (address, uint256, uint256, uint256){
         return
-        (earned(userAddress_),
-        received[userAddress_]);
-    }
-
-    /* ========== RESTRICTED FUNCTIONS ========== */
-
-    /**
-    * @dev Notification Rewards
-    * @notice updateReward(address(0)) onlyRole(DATA_ADMINISTRATOR)
-    * @param startingTime_ Reward start time
-    * @param reward_ Number of experiences per second
-    */
-    function notifyRewardAmount(uint256 startingTime_, uint256 reward_) external updateReward(address(0)) onlyRole(DATA_ADMINISTRATOR) {
-
-        rewardRate = reward_;
-        if (startingTime_ > 0) {
-            lastUpdateTime = startingTime_;
-            poolStartTime = startingTime_;
-        }
-
-        emit RewardAdded(reward_);
+        (metaFinanceClubInfo.userClub(userAddress_),
+        rewardBalanceOf(userAddress_).sub(userPledgeAmount[userAddress_]),
+        userHasReceived[userAddress_],
+        userPledgeAmount[userAddress_]);
     }
 
     /**
-    * @dev Modify production time
-    * @param newLockDays_ New lock time
+    * @dev Update mining pool
+    * @notice Batch withdraw,
+    *         and will experience token swap to cake token,
+    *         and increase the rewards for all users
     */
-    function setLockDays(uint256 newLockDays_) external onlyRole(DATA_ADMINISTRATOR) {
-        lockDays = newLockDays_;
-    }
-    /* ========== MODIFIERS ========== */
-    modifier updateReward(address account) {
-        rewardPerTokenStored = rewardPerToken();
-        lastUpdateTime = block.timestamp;
-        if (account != address(0)) {
-            rewards[account] = earned(account);
-            userRewardPerTokenPaid[account] = rewardPerTokenStored;
+    function updateMiningPool() private nonReentrant {
+        cakeTokenBalanceOf = cakeTokenAddress.balanceOf(address(this));
+        if (totalPledgeValue > proportion) {
+            uint256 length = smartChefArray.length;
+            address[] memory path = new address[](3);
+            path[1] = address(wbnbTokenAddress);
+            path[2] = address(cakeTokenAddress);
+            for (uint256 i = 0; i < length; ++i) {
+                uint256 rewardTokenBalanceOf = IERC20Metadata(smartChefArray[i].rewardToken()).balanceOf(address(this));
+                if (storageQuantity[smartChefArray[i]] != 0) {
+                    smartChefArray[i].withdraw(storageQuantity[smartChefArray[i]]);
+                    path[0] = smartChefArray[i].rewardToken();
+                    swapTokensForCake(IERC20Metadata(path[0]), path, rewardTokenBalanceOf);
+                }
+            }
+
+            uint256 haveAward = ((cakeTokenAddress.balanceOf(address(this))).sub(totalPledgeValue)).sub(cakeTokenBalanceOf);
+
+            if (totalPledgeAmount != 0) {
+                (uint256 userRewards, uint256 exchequerRewards) = totalUserRewards(haveAward);
+                exchequerAmount = exchequerAmount.add(exchequerRewards);
+                takenTransfer(address(this), address(this), userRewards);
+            } else {
+                exchequerAmount = exchequerAmount.add(haveAward);
+            }
         }
+    }
+
+    /**
+    * @dev Bulk pledge
+    */
+    function reinvest() private nonReentrant {
+        totalPledgeValue = (cakeTokenAddress.balanceOf(address(this))).sub(cakeTokenBalanceOf);
+        if (totalPledgeValue > proportion) {
+            uint256 _frontProportionAmount = 0;
+            uint256 _arrayUpperLimit = smartChefArray.length;
+            for (uint256 i = 0; i < _arrayUpperLimit; ++i) {
+                if (i != _arrayUpperLimit - 1) {
+                    storageQuantity[smartChefArray[i]] = (totalPledgeValue.mul(storageProportion[smartChefArray[i]])).div(proportion);
+                    _frontProportionAmount += storageQuantity[smartChefArray[i]];
+                }
+                if (i == _arrayUpperLimit - 1)
+                    storageQuantity[smartChefArray[i]] = totalPledgeValue.sub(_frontProportionAmount);
+            }
+            for (uint256 i = 0; i < _arrayUpperLimit; ++i) {
+                cakeTokenAddress.safeApprove(address(smartChefArray[i]), 0);
+                cakeTokenAddress.safeApprove(address(smartChefArray[i]), storageQuantity[smartChefArray[i]]);
+                smartChefArray[i].deposit(storageQuantity[smartChefArray[i]]);
+            }
+        }
+    }
+
+    /**
+    * @dev Swap token
+    * @param tokenAddress Reward token address
+    * @param path Token Path
+    */
+    function swapTokensForCake(
+        IERC20Metadata tokenAddress,
+        address[] memory path,
+        uint256 oldBalanceOf
+    ) private {
+        uint256 tokenAmount = tokenAddress.balanceOf(address(this)).sub(oldBalanceOf);
+
+        if (tokenAmount < proportion) return;
+        tokenAddress.safeApprove(address(pancakeRouterAddress), 0);
+        tokenAddress.safeApprove(address(pancakeRouterAddress), tokenAmount);
+
+        // address(this) Reward token -> address(uniswapV2Pair) wbnb
+        // address(uniswapV2Pair) wbnb -> address(uniswapV2Pair) cake
+        // address(uniswapV2Pair) cake -> address(this)
+        pancakeRouterAddress.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            tokenAmount,
+            1, // accept any amount of cake
+            path,
+            address(this),
+            block.timestamp + 60
+        );
+    }
+
+    // ==================== ONLYROLE ====================
+    /**
+    * @dev Modify the precision
+    * @param newProportion_ New Club Fee Scale
+    */
+    function setProportion(uint256 newProportion_) external beforeStaking nonReentrant onlyRole(DATA_ADMINISTRATOR) {
+        if (newProportion_ == 100 || newProportion_ == 1000 || newProportion_ == 10000 || newProportion_ == 100000) {
+            if (newProportion_ > proportion) {
+                uint256 difference = newProportion_.div(proportion);
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.mul(difference);
+                treasuryRatio = treasuryRatio.mul(difference);
+                uint256 length = smartChefArray.length;
+                for (uint256 i = 0; i < length; ++i) {
+                    storageProportion[smartChefArray[i]] = storageProportion[smartChefArray[i]].mul(difference);
+                }
+            }
+            if (proportion > newProportion_) {
+                uint256 difference = proportion.div(newProportion_);
+                difference = difference != 0 ? difference : 1;
+                proportion = proportion.div(difference);
+                treasuryRatio = treasuryRatio.div(difference);
+                uint256 length = smartChefArray.length;
+                for (uint256 i = 0; i < length; ++i) {
+                    storageProportion[smartChefArray[i]] = storageProportion[smartChefArray[i]].div(difference);
+                }
+            }
+        }
+    }
+
+    /**
+    * @dev Modify the fee ratio
+    * @param newTreasuryRatio_ New treasury fee ratio
+    */
+    function setFeeRatio(uint256 newTreasuryRatio_) external beforeStaking nonReentrant onlyRole(DATA_ADMINISTRATOR) {
+        if (newTreasuryRatio_ != 0) treasuryRatio = newTreasuryRatio_;
+    }
+
+    /**
+    * @dev Set new external contract address
+    * @param newMetaFinanceClubInfo_ New MetaFinanceClubInfo contract address
+    * @param newMetaFinanceIssuePoolAddress_ New MetaFinanceIssuePoolAddress_ contract address
+    */
+    function setExternalContract(address newMetaFinanceClubInfo_, address newMetaFinanceIssuePoolAddress_) external nonReentrant onlyRole(DATA_ADMINISTRATOR) {
+        metaFinanceClubInfo = IMetaFinanceClubInfo(newMetaFinanceClubInfo_);
+        metaFinanceIssuePoolAddress = IMetaFinanceIssuePool(newMetaFinanceIssuePoolAddress_);
+    }
+
+    /**
+    * @dev Withdraw staked tokens without caring about rewards rewards
+    * @notice Use cautiously and exit with guaranteed principal!!!
+    * @param smartChef_ Pool address
+    * @dev Needs to be for emergency.
+    */
+    function projectPartyEmergencyWithdraw(ISmartChefInitializable smartChef_) external nonReentrant onlyRole(PROJECT_ADMINISTRATOR) {
+        if (totalPledgeAmount != 0) {
+            smartChef_.emergencyWithdraw();
+            totalPledgeValue = totalPledgeValue.sub(storageQuantity[smartChef_]);
+            storageQuantity[smartChef_] = 0;
+        }
+    }
+
+    /**
+    * @dev Upload mining pool ratio
+    * @param storageProportion_ Array of mining pool ratios
+    * @param smartChefArray_ Mining pool address
+    */
+    function uploadMiningPool(uint256[] calldata storageProportion_, ISmartChefInitializable[] calldata smartChefArray_) external beforeStaking nonReentrant onlyRole(PROJECT_ADMINISTRATOR) {
+        require(storageProportion_.length == smartChefArray_.length, "MFTP:E4");
+        smartChefArray = smartChefArray_;
+        uint256 length = smartChefArray.length;
+        for (uint256 i = 0; i < length; ++i) {
+            storageProportion[smartChefArray_[i]] = storageProportion_[i];
+        }
+    }
+
+    /**
+    * @dev claim Tokens to treasury
+    */
+    function claimTokenToTreasury() external beforeStaking nonReentrant onlyRole(MONEY_ADMINISTRATOR) {
+        cakeTokenAddress.safeTransfer(metaFinanceClubInfo.treasuryAddress(), exchequerAmount);
+        exchequerAmount = 0;
+    }
+
+    /**
+    * @dev claim Tokens
+    * @param token Token address(address(0) == ETH)
+    * @param amount Claim amount
+    */
+    function claimTokens(
+        address token,
+        address to,
+        uint256 amount
+    ) external nonReentrant onlyRole(MONEY_ADMINISTRATOR) {
+        if (amount > 0) {
+            if (token == address(0)) {
+                //payable(to).transfer(amount);
+                //require(payable(to).send(amount),"MFTP:E6");
+                (bool res,) = to.call{value : amount}("");
+                require(res, "MFTP:E6");
+            } else {
+                IERC20Metadata(token).safeTransfer(to, amount);
+            }
+        }
+    }
+
+    // ==================== MODIFIER ====================
+
+    modifier beforeStaking(){
+        updateMiningPool();
         _;
+        reinvest();
     }
+
+    // ==================== INTERNAL ====================
+    /**
+    * @dev Internal Funds Transfer
+    * @param from Transfer address
+    * @param to Payee Address
+    * @param amount Number of transfers
+    */
+    function takenTransfer(address from, address to, uint256 amount) private {
+
+        if (from == address(this) && from == to) {
+            _isExcludedFromFee[from] = false;
+        } else {
+            _isExcludedFromFee[from] = true;
+        }
+
+        bool takeFee = (_isExcludedFromFee[from] || _isExcludedFromFee[to]) ? false : true;
+
+        _tokenTransfer(from, to, amount, takeFee);
+    }
+
+    function tokenFromReflection(uint256 rAmount) private view returns (uint256) {
+        require(rAmount <= _rTotal, "MFTP:E6");
+        uint256 currentRate = _getRate();
+        return rAmount.div(currentRate);
+    }
+
+    function _getTValues(uint256 tAmount) private view returns (uint256, uint256) {
+        uint256 tFee = tAmount.mul(_taxFee).div(10 ** 2);
+        uint256 tTransferAmount = tAmount.sub(tFee);
+        return (tTransferAmount, tFee);
+    }
+
+    function _getValues(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256, uint256) {
+        (uint256 tTransferAmount, uint256 tFee) = _getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = _getRValues(tAmount, tFee, _getRate());
+        return (rAmount, rTransferAmount, rFee, tTransferAmount, tFee);
+    }
+
+    function _getRValues(uint256 tAmount, uint256 tFee, uint256 currentRate) private pure returns (uint256, uint256, uint256) {
+        uint256 rAmount = tAmount.mul(currentRate);
+        uint256 rFee = tFee.mul(currentRate);
+        uint256 rTransferAmount = rAmount.sub(rFee);
+        return (rAmount, rTransferAmount, rFee);
+    }
+
+    function _getRate() private view returns (uint256) {
+        (uint256 rSupply, uint256 tSupply) = _getCurrentSupply();
+        return rSupply.div(tSupply);
+    }
+
+    function _getCurrentSupply() private view returns (uint256, uint256) {
+        uint256 rSupply = _rTotal;
+        uint256 tSupply = _tTotal;
+        if (_rOwned[address(this)] > rSupply || _tOwned[address(this)] > tSupply) return (_rTotal, _tTotal);
+        rSupply = rSupply.sub(_rOwned[address(this)]);
+        tSupply = tSupply.sub(_tOwned[address(this)]);
+        if (rSupply < _rTotal.div(_tTotal)) return (_rTotal, _tTotal);
+        return (rSupply, tSupply);
+    }
+
+    function removeAllFee() private {
+        if (_taxFee == 0) return;
+        _previousTaxFee = _taxFee;
+        _taxFee = 0;
+    }
+
+    function _tokenTransfer(address sender, address recipient, uint256 amount, bool takeFee) private {
+        if (!takeFee)
+            removeAllFee();
+        if (_isExcluded[sender] && !_isExcluded[recipient]) {
+            _transferFromExcluded(sender, recipient, amount);
+        } else if (!_isExcluded[sender] && _isExcluded[recipient]) {
+            _transferToExcluded(sender, recipient, amount);
+        } else if (_isExcluded[sender] && _isExcluded[recipient]) {
+            _transferBothExcluded(sender, recipient, amount);
+        }
+        if (!takeFee)
+            _taxFee = _previousTaxFee;
+    }
+
+    function _transferFromExcluded(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee,,) = _getValues(tAmount);
+        _tOwned[sender] = _tOwned[sender].sub(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _rTotal = _rTotal.sub(rFee);
+    }
+
+    function _transferToExcluded(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount,) = _getValues(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _rTotal = _rTotal.sub(rFee);
+    }
+
+    function _transferBothExcluded(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount,) = _getValues(tAmount);
+        _tOwned[sender] = _tOwned[sender].sub(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _rTotal = _rTotal.sub(rFee);
+    }
+
+    receive() external payable {}
 }

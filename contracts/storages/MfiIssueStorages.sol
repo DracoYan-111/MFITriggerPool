@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
-import "../interfaces/MfiIssueInterfaces.sol";
+import "../interfaces/IMfiIssueInterfaces.sol";
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
