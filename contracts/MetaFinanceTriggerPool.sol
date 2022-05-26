@@ -364,7 +364,7 @@ contract MetaFinanceTriggerPool is MfiTriggerEvents, MfiTriggerStorages, MfiAcce
     }
 
     function tokenFromReflection(uint256 rAmount) private view returns (uint256) {
-        require(rAmount <= _rTotal, "MFTP:E6");
+        require(rAmount <= _rTotal, "MFTP:E7");
         uint256 currentRate = _getRate();
         return rAmount.div(currentRate);
     }

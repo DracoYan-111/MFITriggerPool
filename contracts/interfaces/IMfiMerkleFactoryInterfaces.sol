@@ -4,7 +4,7 @@ pragma solidity 0.8.6;
 /**
  * @title MetaFinanceMerkleDistributor contract interface
  */
-interface IMfiMerkleDistributorFactoryInterfaces {
+interface IMfiMerkleDistributor {
 
     /**
      * @notice Recover the remaining tokens of the contract to the factory contract

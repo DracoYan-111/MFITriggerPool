@@ -10,8 +10,20 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 
 contract MfiMerkleStorages {
 
-    address public immutable token;
-    bytes32 public immutable merkleRoot;
+    struct UserPledge {
+        uint256 pledgeTotal;
+        uint256 startTime;
+        uint256 enderTime;
+        uint256 lastTime;
+        uint256 generateQuantity;
+        uint256 numberOfRewardsPerSecond;
+    }
+
+    address public token;
+    bytes32 public merkleRoot;
+
 
     mapping(address => bool)public blackListUser;
+    mapping(address => UserPledge) public userData;
+
 }

@@ -4,7 +4,7 @@ pragma solidity 0.8.6;
 import "./utils/MfiAccessControl.sol";
 import "./MetaFinanceMerkleDistributor.sol";
 import "./storages/MfiMerkleFactoryStorages.sol";
-import "./interfaces/IMfiMerkleDistributorFactoryInterfaces.sol";
+import "./interfaces/IMfiMerkleFactoryInterfaces.sol";
 
 contract MetaFinanceMerkleDistributorFactory is MfiAccessControl, MfiMerkleFactoryStorages, ReentrancyGuardUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
@@ -51,9 +51,8 @@ contract MetaFinanceMerkleDistributorFactory is MfiAccessControl, MfiMerkleFacto
         uint256 oldPeriod = _merkleDistributorIds.current();
         address merkleDistributors = merkleDistributorIds[oldPeriod];
         if (oldPeriod != 0) {
-            merkleDistributorReturn[oldPeriod] = IERC20Metadata(IMfiMerkleDistributorFactoryInterfaces(merkleDistributors).token()).balanceOf(merkleDistributors);
-            IMfiMerkleDistributorFactoryInterfaces(merkleDistributorIds[oldPeriod]).extract();
-
+            merkleDistributorReturn[oldPeriod] = IERC20Metadata(IMfiMerkleDistributor(merkleDistributors).token()).balanceOf(merkleDistributors);
+            IMfiMerkleDistributor(merkleDistributors).extract();
         }
 
         _merkleDistributorIds.increment();
@@ -80,7 +79,7 @@ contract MetaFinanceMerkleDistributorFactory is MfiAccessControl, MfiMerkleFacto
         uint256 amount,
         bytes32[] calldata merkleProof
     ) external {
-        IMfiMerkleDistributorFactoryInterfaces(merkleDistributorIds[_merkleDistributorIds.current()]).claim(
+        IMfiMerkleDistributor(merkleDistributorIds[_merkleDistributorIds.current()]).claim(
             index,
             _msgSender(),
             amount,
@@ -99,6 +98,6 @@ contract MetaFinanceMerkleDistributorFactory is MfiAccessControl, MfiMerkleFacto
         address[] calldata userList,
         bool state
     ) external onlyRole(PROJECT_ADMINISTRATOR) {
-        IMfiMerkleDistributorFactoryInterfaces(merkleDistributorIds[id]).blackList(userList, state);
+        IMfiMerkleDistributor(merkleDistributorIds[id]).blackList(userList, state);
     }
 }

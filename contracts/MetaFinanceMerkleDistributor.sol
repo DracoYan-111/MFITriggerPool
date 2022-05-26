@@ -1,22 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "./storages/MfiMerkleStorages.sol";
 
-contract MetaFinanceMerkleDistributor is Ownable {
+contract MetaFinanceMerkleDistributor is MfiMerkleStorages, Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
-
-    address public immutable  token;
-    bytes32 public immutable  merkleRoot;
-
-    mapping(address => bool)public blackListUser;
+    //
+    //    address public immutable  token;
+    //    bytes32 public immutable  merkleRoot;
+    //
+    //    mapping(address => bool)public blackListUser;
     // This is a packed array of booleans.
     mapping(uint256 => uint256) private claimedBitMap;
 
@@ -89,7 +84,7 @@ contract MetaFinanceMerkleDistributor is Ownable {
 
         // Mark it claimed and send the token.
         _setClaimed(index_);
-        IERC20Metadata(token).safeTransfer(account_, amount_);
+        /// IERC20Metadata(token).safeTransfer(account_, amount_);
         emit Claimed(index_, account_, amount_);
     }
 
