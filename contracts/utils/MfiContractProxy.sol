@@ -962,9 +962,7 @@ contract ProxyAdmin is Ownable {
     }
 }
 
-// File: contracts/utils/MfiContractPorxy.sol
-
- 
+// File: contracts/utils/MfiContractProxy.sol
 
 
-contract MfiContractPorxy is ProxyAdmin {}
+contract MfiContractProxy is ProxyAdmin {}

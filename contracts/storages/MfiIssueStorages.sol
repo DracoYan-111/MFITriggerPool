@@ -38,5 +38,4 @@ contract MfiIssueStorages {
     mapping(address => UserPledge) public userData;
     mapping(address => uint256) public userRewardPerTokenPaid;
 
-
 }

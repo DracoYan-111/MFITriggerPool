@@ -23,18 +23,18 @@ contract MfiIssueEvents {
     event Withdrawn(address indexed _user, uint256 _amount);
 
     /**
+    * @dev User receive reward event
+    * @param _user User address
+    * @param _reward User receive amount
+    */
+    event RewardPaid(address indexed _user, uint256 _reward);
+
+    /**
     * @dev User harvest event
     * @param _user User address
     * @param _rewardsToken Rewards token address
     * @param _reward User harvest amount
     */
     event UserHarvest(address indexed _user, address _rewardsToken, uint256 _reward);
-
-    /**
-    * @dev User receive reward event
-    * @param _user User address
-    * @param _reward User receive amount
-    */
-    event RewardPaid(address indexed _user, uint256 _reward);
 
 }

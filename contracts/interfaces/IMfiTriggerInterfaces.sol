@@ -12,21 +12,16 @@ interface IPancakeRouter02 {
         address to,
         uint256 deadline
     ) external;
+
 }
 
 /**
  * @title MetaFinanceClubInfo contract interface
  */
 interface IMetaFinanceClubInfo {
-    /**
-    * @dev User binding club
-    * @param userAddress_ User address
-    * @param clubAddress_ Club address
-    */
-    function boundClub(address userAddress_, address clubAddress_) external;
 
     /**
-    * @dev Calculate the number of club rewards
+    * @notice Calculate the number of club rewards
     * @param clubAddress_ Club address
     * @param tokenAddress_ Club token address
     * @param amount_ Number of operations
@@ -35,23 +30,31 @@ interface IMetaFinanceClubInfo {
     function calculateReward(address clubAddress_, address tokenAddress_, uint256 amount_, bool addOrSub_) external;
 
     /**
-    * @dev Query user club address
+    * @notice User binding club
+    * @param userAddress_ User address
+    * @param clubAddress_ Club address
+    */
+    function boundClub(address userAddress_, address clubAddress_) external;
+
+    /**
+    * @notice Query user club address
     * @param userAddress_ User address
     * @return Return to club address
     */
     function userClub(address userAddress_) external view returns (address);
 
     /**
-    * @dev Get Club Rewards
+    * @notice Query treasury address
+    * @return Return to Treasury Address
+    */
+    function treasuryAddress() external view returns (address);
+
+    /**
+    * @notice Get Club Rewards
     * @return Back to Club Reward Scale
     */
     function clubIncentive() external view returns (uint256);
 
-    /**
-    * @dev Query treasury address
-    * @return Return to Treasury Address
-    */
-    function treasuryAddress() external view returns (address);
 }
 
 /**
@@ -71,6 +74,7 @@ interface IMetaFinanceIssuePool {
      * @param amount_ The number of users released
      */
     function withdraw(address userAddress_, uint256 amount_) external;
+
 }
 
 /**
@@ -111,6 +115,7 @@ interface ISmartChefInitializable {
      * @notice Get reward tokens
      */
     function rewardToken() external view returns (address);
+
 }
 
 

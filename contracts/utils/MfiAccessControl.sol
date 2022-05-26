@@ -22,5 +22,4 @@ abstract contract MfiAccessControl is AccessControl {
     // meta finance trigger pool address
     bytes32 public constant META_FINANCE_TRIGGER_POOL = bytes32(keccak256(abi.encodePacked("META_FINANCE_TRIGGER_POOL")));
 
-
 }

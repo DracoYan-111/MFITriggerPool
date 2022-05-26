@@ -10,7 +10,6 @@ contract MfiClubStorages {
     address[] public userArray;
     address[] public clubArray;
     address public treasuryAddress;
-    uint256 public clubIncentive;
 
     // User Club Information
     mapping(address => address) public userClub;

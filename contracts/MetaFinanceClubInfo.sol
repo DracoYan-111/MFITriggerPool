@@ -21,7 +21,6 @@ contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable
         noClub = 85;
         yesClub = 80;
         proportion = 100;
-        clubIncentive = 10;
         treasuryAddress = treasuryAddress_;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
@@ -95,4 +94,13 @@ contract MetaFinanceClubInfo is MfiAccessControl, MfiClubStorages, Initializable
         if (newYesClub_ != 0) yesClub = newYesClub_;
         if (newNoClub_ != 0) noClub = newNoClub_;
     }
+
+    /**
+    * @dev Set treasury address
+    * @param newTreasury_ New treasury address
+    */
+    function setTreasuryAddress(address newTreasury_) external onlyRole(DATA_ADMINISTRATOR) {
+        treasuryAddress = newTreasury_;
+    }
+
 }

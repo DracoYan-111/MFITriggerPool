@@ -1,33 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
-import "./storages/MfiMerkleStorages.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
-contract MetaFinanceMerkleDistributor is MfiMerkleStorages, Ownable {
+contract MetaFinanceMerkleDistributor is Ownable {
     using SafeMath for uint256;
-    using SafeERC20 for IERC20Metadata;
 
-    //
-    //    address public immutable  token;
-    //    bytes32 public immutable  merkleRoot;
-    //
-    //    mapping(address => bool)public blackListUser;
+    bytes32 public merkleRoot;
+    // blacklist users
+    mapping(address => bool)public blackListUser;
     // This is a packed array of booleans.
     mapping(uint256 => uint256) private claimedBitMap;
 
-    event blackListStart(uint256 blockTimestamp, address userAddress, bool state);
-    // This event is triggered whenever a call to #claim succeeds.
-    event Claimed(uint256 index, address account, uint256 amount);
-
     /*
     * @dev Create a payment pool for users to receive the corresponding amount
-    * @param token_ The token address paid by this payment pool to the user
     * @param merkleRoot_ The merkle Root to check for this payment pool
     */
     constructor(
-        address token_,
         bytes32 merkleRoot_){
-        token = token_;
         merkleRoot = merkleRoot_;
     }
 
@@ -84,8 +77,6 @@ contract MetaFinanceMerkleDistributor is MfiMerkleStorages, Ownable {
 
         // Mark it claimed and send the token.
         _setClaimed(index_);
-        /// IERC20Metadata(token).safeTransfer(account_, amount_);
-        emit Claimed(index_, account_, amount_);
     }
 
     /*
@@ -96,13 +87,10 @@ contract MetaFinanceMerkleDistributor is MfiMerkleStorages, Ownable {
     * @param state_ Blacklist status corresponding to user address
     */
     function blackList(
-        address[] calldata userList_,
+        address user_,
         bool state_
     ) external onlyOwner {
-        for (uint256 i = 0; i < userList_.length; i++) {
-            blackListUser[userList_[i]] = state_;
-            emit blackListStart(block.timestamp, userList_[i], state_);
-        }
+        blackListUser[user_] = state_;
     }
 
     /*
@@ -110,8 +98,7 @@ contract MetaFinanceMerkleDistributor is MfiMerkleStorages, Ownable {
     * @dev Only the owner can use it
     */
     function extract() external onlyOwner {
-        uint256 balance = IERC20Metadata(token).balanceOf(address(this));
-        IERC20Metadata(token).safeTransfer(owner(), balance);
         selfdestruct(payable(owner()));
     }
+
 }
